@@ -4,55 +4,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 .peg-hole {
-    height: 50px;
-    width: 50px;
-    border-style: solid;
-    border-color:rgb(106, 8, 8);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    border-style: solid;
+    background-color:white;
+    border-color: #b58a62;
+    margin: 10px;
     display: inline-block;
-    margin-left: 50px;
+    overflow: hidden;
 }
 
-.box {
-    display: flex;
+.triangle-row {
+    text-align: center;
 }
 
 img {
-    height: 50px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
 }
 </style>
 </head>
 <body>
+    <div class="container">
+        <h1 class="text-center mt-5">Triangle Peg Game</h1>
+        <div class="row justify-content-center mt-4">
+            <div class="triangle-row">
+                <div class="peg-hole" id="pegHole1"><img src="images/peg.png" id="peg14" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole2"><img src="images/peg.png" id="peg13" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole3"><img src="images/peg.png" id="peg12" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole4"><img src="images/peg.png" id="peg11" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole5"><img src="images/peg.png" id="peg10" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+            </div>
+            <div class="triangle-row">
+                <div class="peg-hole" id="pegHole6"><img src="images/peg.png" id="peg9" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole7"><img src="images/peg.png" id="peg8" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole8"><img src="images/peg.png" id="peg7" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole9"><img src="images/peg.png" id="peg6" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+            </div>
+            <div class="triangle-row" >
+                <div class="peg-hole" id="pegHole10"><img src="images/peg.png" id="peg5" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole11"><img src="images/peg.png" id="peg4" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole12"><img src="images/peg.png" id="peg3" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+            </div>
+            <div class="triangle-row">
+                <div class="peg-hole" id="pegHole13"><img src="images/peg.png" id="peg2" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+                <div class="peg-hole" id="pegHole14"><img src="images/peg.png" id="peg1" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
+            </div>
+            <div class="triangle-row">
+                <div class="peg-hole" id="pegHole15"></div>
+            </div>      
+        </div>
+    </div>
 
-<div style="text-align:center">
-  <h1>Peg Game</h1>
-  	<div>
-    	<div class="peg-hole" id="pegHole1"><img src="images/peg.png" id="peg14" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole2"><img src="images/peg.png" id="peg13" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole3"><img src="images/peg.png" id="peg12" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole4"><img src="images/peg.png" id="peg11" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole5"><img src="images/peg.png" id="peg10" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-    </div>
-    <div>
-    	<div class="peg-hole" id="pegHole6"><img src="images/peg.png" id="peg9" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole7"><img src="images/peg.png" id="peg8" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole8"><img src="images/peg.png" id="peg7" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole9"><img src="images/peg.png" id="peg6" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-    </div>
-    <div>
-    	<div class="peg-hole" id="pegHole10"><img src="images/peg.png" id="peg5" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole11"><img src="images/peg.png" id="peg4" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole12"><img src="images/peg.png" id="peg3" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-    </div>
-    <div>
-    	<div class="peg-hole" id="pegHole13"><img src="images/peg.png" id="peg2" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-        <div class="peg-hole" id="pegHole14"><img src="images/peg.png" id="peg1" draggable="true" ondragstart="dragStart(event)" alt="peg"></div>
-    </div>
-    <div>
-    	<div class="peg-hole" id="pegHole15"></div>
-    </div>
-</div>
-<script src="js/stick_game.js"></script>
+    <script src="js/stick_game.js"></script>
 </body>
 </html> 

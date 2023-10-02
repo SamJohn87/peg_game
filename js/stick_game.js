@@ -12,6 +12,7 @@ let FUNCTION_DRAG_OVER;
 let FROM_HOLE_NUMBER = 0;
 let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = [];
+//console.log('javascript connected');
 
 function initializeBoard() {
     
