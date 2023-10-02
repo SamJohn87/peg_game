@@ -1,7 +1,7 @@
 //GLOBAL VARIABLES
 const PEG_HOLE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
-const MOVE_OPTIONS = [['3','10'], [], [], [], [], [], [], [], [], ['1', '3', '12', '15'], [], ['3', '5', '10', '15'], [], [], []];
-const PEG_TO_REMOVE = [['2','6'], [], [], [], [], [], [], [], [], ['6', '7', '11', '13'], [], ['8', '9', '11', '14'], [], [], []];
+const MOVE_OPTIONS = [['3','10'], ['4', '11'], ['1', '5', '10', '12'], ['2', '11'], ['3', '12'], ['8', '13'], ['9', '14'], ['6', '13'], ['7', '14'], ['1', '3', '12', '15'], ['2', '4'], ['3', '5', '10', '15'], ['6', '8'], ['7', '9'], ['10', '12']];
+const PEG_TO_REMOVE = [['2','6'], ['3', '7'], ['2', '4', '7', '8'], ['3', '8'], ['4', '9'], ['7', '10'], ['8', '11'], ['7', '11'], ['8', '12'], ['6', '7', '11', '13'], ['7', '8'], ['8', '9', '11', '14'], ['10', '11'], ['11', '12'], ['13', '14']];
 
 let EVENTS_ARR = [];
 let EVENTS_PEG_HOLE_ARR = [];
@@ -30,7 +30,7 @@ function initializeBoard() {
             MOVES_ALLOWED.push(i);
         }
     }
-    console.log(MOVES_ALLOWED);
+    //console.log(MOVES_ALLOWED);
 /*
     for(move of movesAllowed) {
        const pegToMove = document.querySelector(`#pegHole${pegHole[move]} > img`);
@@ -64,30 +64,55 @@ function dragStart(event) {
 function drop(event) {
 
     event.preventDefault();
+    let alertMessage = '';
+
+    console.log('move array ' + MOVES_ALLOWED);
+    console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
 
     const moveAlowedIdx = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER[0]);
-    //console.log(moveAlowedIdx);
+    console.log('moveallowedidx ' + moveAlowedIdx);
 
-    const moveAlowed = MOVES_ALLOWED.findIndex((element) => element === moveAlowedIdx);
-    //console.log(moveAlowed);
+    const moveFound = MOVES_ALLOWED.findIndex((element) => element === moveAlowedIdx);
+    //console.log('move allowed ' + moveAlowed);
 
     //check if move is allowed
-    if(moveAlowed >= 0) {
+    if(moveFound >= 0) {
 
-        var data = event.dataTransfer.getData("text");
+        console.log(MOVE_OPTIONS[moveAlowedIdx]);
+
+        const data = event.dataTransfer.getData("text");
         //get the number of the hole in which the peg is dropped
         const toHole = event.target.id;
         //extract the number part pegHole15 returns 15
         TO_HOLE_NUMBER = toHole.match(/(\d+)/);
-        event.target.appendChild(document.getElementById(data));
-        //call function to remove the peg jumped over
 
-        //remove peg jumped over
-        removePeg(FROM_HOLE_NUMBER[0],TO_HOLE_NUMBER[0]);
+        const moveAllowed = MOVE_OPTIONS[moveAlowedIdx].findIndex((element) => element === TO_HOLE_NUMBER[0]);
+        //console.log('TO_HOLE_NUMBER ' + TO_HOLE_NUMBER[0]);
+        console.log('moveAllowed ' + moveAllowed);
+
+        if(moveAllowed >= 0) {
+
+            console.log(' ok ');
+
+            event.target.appendChild(document.getElementById(data));
+            //call function to remove peg jumped over
+            removePeg(FROM_HOLE_NUMBER[0],TO_HOLE_NUMBER[0]);
+
+        } else {
+
+            alertMessage = 'Move not allowed!';
+
+        }
 
     } else {
 
-       alert('Move not allowed!');
+        alertMessage = 'Move not allowed!';
+
+    }
+
+    if(alertMessage) {
+
+        alert(alertMessage);
 
     }
 
@@ -95,7 +120,7 @@ function drop(event) {
 
 function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     
-    console.log(`from ${FROM_HOLE_NUMBER} to ${TO_HOLE_NUMBER}`);
+    console.log(`to ${TO_HOLE_NUMBER}`);
     
     //locate array index for hole where peg was dragged from
     const foundIdxFrom = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER);
@@ -144,9 +169,51 @@ function reinitializeBoard() {
 
     //locate empty pegh holes
     const emptyHoles = document.querySelectorAll('.empty');
-    console.log(emptyHoles);
-    
+    setMoveAllowed(emptyHoles);
 
+}
+
+function setMoveAllowed(emptyHoles) {
+
+    for(let hole of emptyHoles) {
+
+        
+        //add ondrop and ondragover events to empty peg holes
+        FUNCTION_DROP = (event) => drop(event);
+        FUNCTION_DRAG_OVER = (event) => dragOver(event);
+        hole.addEventListener('drop', FUNCTION_DROP);
+        hole.addEventListener('dragover', FUNCTION_DRAG_OVER);
+        //save event definition for later removal
+        EVENTS_ARR = [];
+        EVENTS_ARR.push(`#${hole.id}`, FUNCTION_DROP, FUNCTION_DRAG_OVER);
+        EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+
+        //set allowed moves based on empty peg holes 
+        const pegHoleNumber = hole.id.match(/(\d+)/);
+        console.log('number ' + pegHoleNumber[0]);
+
+        for(let i = 0; i < MOVE_OPTIONS.length; i++) {
+
+            const findMoveIdx = MOVE_OPTIONS[i].findIndex((element) => element === pegHoleNumber[0]);
+
+            if(findMoveIdx >= 0){
+
+                //console.log('test ' + PEG_TO_REMOVE[i][findMoveIdx]);
+                //check if removal peg is present
+                const isEmpty = document.querySelector(`#pegHole${PEG_TO_REMOVE[i][findMoveIdx]}`).classList.contains('empty');
+                //console.log(isEmpty);
+
+                if(!isEmpty) {
+                    MOVES_ALLOWED.push(i);
+                }
+
+            }
+        }     
+
+    }
+
+    console.log('moves ' + MOVES_ALLOWED);
+    //console.log(EVENTS_PEG_HOLE_ARR);
 
 }
 
