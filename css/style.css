@@ -26,12 +26,24 @@ img {
     height: 100%;
 }
 
-.reset-button {
+.btn-custom {
     padding: 10px 20px;
     border: none;
     cursor: pointer;
     margin-bottom: 20px;
+    background-color: #b58a62;
+    color: white;
+    border-radius: 5px;
+}
+
+.btn-custom:hover {
     background-color: #65451F;
+    color: white;
+}
+
+.btn-custom:active {
+    background-color: #b58a62;
+    color: white;
 }
 
 .info-board {
@@ -50,4 +62,16 @@ img {
     text-align: center;
     padding-top: 10px;
     border-radius: 5px;
+}
+
+.modal-body {
+    text-align: left;
+}
+
+a {
+    color: #65451F;
+}
+
+a:hover {
+    color: #b58a62;
 }

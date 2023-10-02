@@ -12,14 +12,27 @@ let FUNCTION_DRAG_OVER;
 let FROM_HOLE_NUMBER = 0;
 let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = [];
+let IS_GAME_OVER = false;
+let MOVES_POSSIBLE = 0; //keeps track of how many moves are possible
 //console.log('javascript connected');
 
-const stopwatch = document.querySelector(".stopwatch");
-let seconds = 0;
-let interval;
-let attempts = 0; // Initialize the card attempts counter
+const WRONG_MOVE_MODAL = new bootstrap.Modal(document.querySelector('#wrongMoveModal'));
+const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
+const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
+let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
+const STOPWATCH = document.querySelector('.stopwatch');
+let SECONDS = 0;
+let INTERVAL;
+let PEGS_LEFT = 14; // Initialize the number of pegs on the board
+
+// Show the difficulty selection modal when the page is loaded
+document.addEventListener("DOMContentLoaded", function () {
+    GAMEPLAY_MODAL.show();
+});
 
 function initializeBoard() {
+
+    GAMEPLAY_MODAL.hide();
     
     const pegContainer = document.querySelector('#pegHole15');
     FUNCTION_DROP = (event) => drop(event);
@@ -53,8 +66,6 @@ function dragOver(event) {
 
 function dragStart(event) {
 
-    //start stopwatch
-    startStopwatch();
     const draggedPeg = event.target.id;
     //get the number of the hole from which the peg was taken
     const draggedPegHole = document.querySelector(`#${draggedPeg}`).parentNode.id;
@@ -64,7 +75,8 @@ function dragStart(event) {
    
 }
 
-function touchStart(event) {
+//for mobile device interaction
+/*function touchStart(event) {
 
     const draggedPeg = event.target.id;
     //get the number of the hole from which the peg was taken
@@ -73,14 +85,20 @@ function touchStart(event) {
     FROM_HOLE_NUMBER = draggedPegHole.match(/(\d+)/);
     event.dataTransfer.setData("text/plain", draggedPeg);
    
-}
+}*/
 
 function drop(event) {
 
     event.preventDefault();
-    let alertMessage = '';
-    attempts++;
-    updateAttemptsCounter();
+    let alertMessage = false;
+    
+    if(FIRST_MOVE) {
+
+         //start stopwatch
+        startStopwatch();
+        FIRST_MOVE = false;
+
+    }
 
     //console.log('move array ' + MOVES_ALLOWED);
     //console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
@@ -115,19 +133,19 @@ function drop(event) {
 
         } else {
 
-            alertMessage = 'Move not allowed!';
+            alertMessage = true;
 
         }
 
     } else {
 
-        alertMessage = 'Move not allowed!';
+        alertMessage = true;
 
     }
 
     if(alertMessage) {
 
-        alert(alertMessage);
+        WRONG_MOVE_MODAL.show();
 
     }
 
@@ -159,8 +177,15 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     //remove class empty to hole receiving peg
     document.querySelector(`#pegHole${TO_HOLE_NUMBER}`).classList.remove('empty');
 
+    //update pegs counter
+    PEGS_LEFT--;
+    updatePegsLeft();
+
     //reinitialize board events
     reinitializeBoard();
+
+    //check if game is over
+    checkGameOver();
 
 }
 
@@ -236,12 +261,12 @@ function setMoveAllowed(emptyHoles) {
 // Start the stopwatch
 function startStopwatch() {
 
-    interval = setInterval(() => {
-        seconds++;
-        const minutes = Math.floor(seconds / 60);
-        const remainderSeconds = seconds % 60;
+    INTERVAL = setInterval(() => {
+        SECONDS++;
+        const minutes = Math.floor(SECONDS / 60);
+        const remainderSeconds = SECONDS % 60;
         const formattedTime = `${minutes.toString().padStart(2, '0')}:${remainderSeconds.toString().padStart(2, '0')}`;
-        stopwatch.textContent = formattedTime;
+        STOPWATCH.textContent = formattedTime;
     }, 1000);
 
 }
@@ -254,9 +279,99 @@ function resetGame() {
 }
 
 // Function to update the attempts counter
-function updateAttemptsCounter() {
-    const attemptsCounter = document.getElementById("attemptsCounter");
-    attemptsCounter.textContent = attempts;
+function updatePegsLeft() {
+    const pegsLeftCounter = document.getElementById("pegsLeftCounter");
+    pegsLeftCounter.textContent = PEGS_LEFT;
 }
 
-initializeBoard();
+function checkGameOver() {
+
+    //console.log('game is over?');
+
+    //get all remaining pegs
+    const pegsleft = document.querySelectorAll('div.peg-hole:not(.empty');
+    MOVES_POSSIBLE = 0;
+    //console.log('pegsleft length ' + pegsleft.length);
+    
+    for(let peg of pegsleft) {
+
+        //console.log(peg.id);
+
+        //replica of some part of code from function setMoveAllowed
+        /*************************************************************/
+        const holeNumber = peg.id.match(/(\d+)/);
+        //console.log('number ' + holeNumber[0]);
+
+        for(let i = 0; i < MOVE_OPTIONS.length; i++) {
+
+            const findMoveIdx = MOVE_OPTIONS[i].findIndex((element) => element === holeNumber[0]);
+
+            if(findMoveIdx >= 0){
+
+                //console.log('test ' + PEG_TO_REMOVE[i][findMoveIdx]);
+                //check if removal peg is present
+                const isEmpty = document.querySelector(`#pegHole${PEG_TO_REMOVE[i][findMoveIdx]}`).classList.contains('empty');
+                //console.log(isEmpty);
+
+                if(!isEmpty) {
+
+                    MOVES_POSSIBLE++;
+                    //console.log('moves available than what ?');
+
+                } /*else {
+                    //console.log('no moves for available for ' + i)
+                    console.log('no moves for available for ' + holeNumber[0])
+                }*/
+
+            }
+        }
+         /*************************************************************/
+
+    }
+
+    if(MOVES_POSSIBLE === 0) {
+
+        //console.log('game over');
+        clearInterval(INTERVAL);
+        showGameCompletedModal();
+
+    }
+    
+}
+
+// Function to show the game completion modal
+function showGameCompletedModal() {
+    const modalTime = document.querySelector("#modalTime");
+    const modalPegsLeft = document.querySelector("#pegsLeft");
+    const modalSkillMessage = document.querySelector("#skillMessage");
+    const modalSkillMsgDesc = document.querySelector("#skillMessageDescription");
+    modalTime.textContent = STOPWATCH.textContent;
+
+    if(PEGS_LEFT >= 5) {
+
+        modalPegsLeft.textContent = `${PEGS_LEFT} pegs left.`;
+        modalSkillMessage.innerHTML = `Your level is: <b>Peg Solitaire Beginner</b>`;
+        modalSkillMsgDesc.innerHTML = 'Beginners have a basic understanding of the game but still have room for improvement in terms of strategy.';
+
+    } else if(PEGS_LEFT > 2) {
+
+        modalPegsLeft.textContent = `${PEGS_LEFT} pegs left`;
+        modalSkillMessage.innerHTML = `Your level is: <b>Peg Solitaire Intermediate</b>`;
+        modalSkillMsgDesc.innerHTML = 'Intermediate players have developed some proficiency and can solve the puzzle with relatively few pegs remaining.';
+
+    } else if(PEGS_LEFT === 2) {
+
+        modalPegsLeft.textContent = `${PEGS_LEFT} pegs left`;
+        modalSkillMessage.innerHTML = `Your level is: <b>Peg Solitaire Advanced</b>`;
+        modalSkillMsgDesc.innerHTML = 'Advanced players are skilled and can solve the puzzle with just two pegs left, demonstrating a good grasp of the game\'s strategy.';
+
+    } else {
+
+        modalPegsLeft.textContent = `${PEGS_LEFT} peg left`;
+        modalSkillMessage.innerHTML = `Your level is: <b>Peg Solitaire Expert</b>`;
+        modalSkillMsgDesc.innerHTML = 'Experts are highly skilled players who consistently solve the puzzle with one peg remaining, showcasing a deep understanding of Peg Solitaire strategy.';
+
+    }
+    
+    GAME_COMPLETE_MODAL.show();
+}
