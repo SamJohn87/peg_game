@@ -25,22 +25,17 @@ function initializeBoard() {
     EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
 
     for(let i = 0; i < MOVE_OPTIONS.length; i++) {
+
         const found = MOVE_OPTIONS[i].find((element) => element === '15');
+
         if(found > 0){
+
             MOVES_ALLOWED.push(i);
+
         }
     }
+
     //console.log(MOVES_ALLOWED);
-/*
-    for(move of movesAllowed) {
-       const pegToMove = document.querySelector(`#pegHole${pegHole[move]} > img`);
-       console.log(`#pegHole${pegHole[move]}`);
-       functionDrag = (event) => drag(event);
-       pegToMove.addEventListener('dragstart', functionDrag);
-       eventsArr = []; //empty array from previous info
-       eventsArr.push(`#pegHole${pegHole[move]}`, 0, 0, functionDrag);
-       eventListenerpegHoleArr.push(eventsArr);
-    }*/
 
 }
 
@@ -66,11 +61,11 @@ function drop(event) {
     event.preventDefault();
     let alertMessage = '';
 
-    console.log('move array ' + MOVES_ALLOWED);
-    console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
+    //console.log('move array ' + MOVES_ALLOWED);
+    //console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
 
     const moveAlowedIdx = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER[0]);
-    console.log('moveallowedidx ' + moveAlowedIdx);
+    //console.log('moveallowedidx ' + moveAlowedIdx);
 
     const moveFound = MOVES_ALLOWED.findIndex((element) => element === moveAlowedIdx);
     //console.log('move allowed ' + moveAlowed);
@@ -78,7 +73,7 @@ function drop(event) {
     //check if move is allowed
     if(moveFound >= 0) {
 
-        console.log(MOVE_OPTIONS[moveAlowedIdx]);
+        //console.log(MOVE_OPTIONS[moveAlowedIdx]);
 
         const data = event.dataTransfer.getData("text");
         //get the number of the hole in which the peg is dropped
@@ -88,12 +83,11 @@ function drop(event) {
 
         const moveAllowed = MOVE_OPTIONS[moveAlowedIdx].findIndex((element) => element === TO_HOLE_NUMBER[0]);
         //console.log('TO_HOLE_NUMBER ' + TO_HOLE_NUMBER[0]);
-        console.log('moveAllowed ' + moveAllowed);
+        //console.log('moveAllowed ' + moveAllowed);
 
         if(moveAllowed >= 0) {
 
-            console.log(' ok ');
-
+            //console.log(' ok ');
             event.target.appendChild(document.getElementById(data));
             //call function to remove peg jumped over
             removePeg(FROM_HOLE_NUMBER[0],TO_HOLE_NUMBER[0]);
@@ -120,7 +114,7 @@ function drop(event) {
 
 function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     
-    console.log(`to ${TO_HOLE_NUMBER}`);
+    //console.log(`to ${TO_HOLE_NUMBER}`);
     
     //locate array index for hole where peg was dragged from
     const foundIdxFrom = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER);
@@ -130,7 +124,7 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     //locate array index of hole where peg need to be remove
     const foundPegToRemove = PEG_TO_REMOVE[foundIdxFrom][foundIdxFromTo];
     
-    console.log('remove '+ foundPegToRemove);
+    //console.log('remove '+ foundPegToRemove);
 
     //remove peg from hole
     const pegHoleContainer = document.querySelector(`#pegHole${foundPegToRemove}`);
@@ -176,7 +170,6 @@ function reinitializeBoard() {
 function setMoveAllowed(emptyHoles) {
 
     for(let hole of emptyHoles) {
-
         
         //add ondrop and ondragover events to empty peg holes
         FUNCTION_DROP = (event) => drop(event);
@@ -190,7 +183,7 @@ function setMoveAllowed(emptyHoles) {
 
         //set allowed moves based on empty peg holes 
         const pegHoleNumber = hole.id.match(/(\d+)/);
-        console.log('number ' + pegHoleNumber[0]);
+        //console.log('number ' + pegHoleNumber[0]);
 
         for(let i = 0; i < MOVE_OPTIONS.length; i++) {
 
@@ -204,7 +197,9 @@ function setMoveAllowed(emptyHoles) {
                 //console.log(isEmpty);
 
                 if(!isEmpty) {
+
                     MOVES_ALLOWED.push(i);
+
                 }
 
             }
@@ -212,7 +207,7 @@ function setMoveAllowed(emptyHoles) {
 
     }
 
-    console.log('moves ' + MOVES_ALLOWED);
+    //console.log('moves ' + MOVES_ALLOWED);
     //console.log(EVENTS_PEG_HOLE_ARR);
 
 }
