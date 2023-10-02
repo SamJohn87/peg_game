@@ -14,6 +14,11 @@ let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = [];
 //console.log('javascript connected');
 
+const stopwatch = document.querySelector(".stopwatch");
+let seconds = 0;
+let interval;
+let attempts = 0; // Initialize the card attempts counter
+
 function initializeBoard() {
     
     const pegContainer = document.querySelector('#pegHole15');
@@ -48,12 +53,25 @@ function dragOver(event) {
 
 function dragStart(event) {
 
+    //start stopwatch
+    startStopwatch();
     const draggedPeg = event.target.id;
     //get the number of the hole from which the peg was taken
     const draggedPegHole = document.querySelector(`#${draggedPeg}`).parentNode.id;
     //extract the number part pegHole15 returns 15
     FROM_HOLE_NUMBER = draggedPegHole.match(/(\d+)/);
-    event.dataTransfer.setData("text", draggedPeg);
+    event.dataTransfer.setData("text/plain", draggedPeg);
+   
+}
+
+function touchStart(event) {
+
+    const draggedPeg = event.target.id;
+    //get the number of the hole from which the peg was taken
+    const draggedPegHole = document.querySelector(`#${draggedPeg}`).parentNode.id;
+    //extract the number part pegHole15 returns 15
+    FROM_HOLE_NUMBER = draggedPegHole.match(/(\d+)/);
+    event.dataTransfer.setData("text/plain", draggedPeg);
    
 }
 
@@ -61,6 +79,8 @@ function drop(event) {
 
     event.preventDefault();
     let alertMessage = '';
+    attempts++;
+    updateAttemptsCounter();
 
     //console.log('move array ' + MOVES_ALLOWED);
     //console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
@@ -211,6 +231,32 @@ function setMoveAllowed(emptyHoles) {
     //console.log('moves ' + MOVES_ALLOWED);
     //console.log(EVENTS_PEG_HOLE_ARR);
 
+}
+
+// Start the stopwatch
+function startStopwatch() {
+
+    interval = setInterval(() => {
+        seconds++;
+        const minutes = Math.floor(seconds / 60);
+        const remainderSeconds = seconds % 60;
+        const formattedTime = `${minutes.toString().padStart(2, '0')}:${remainderSeconds.toString().padStart(2, '0')}`;
+        stopwatch.textContent = formattedTime;
+    }, 1000);
+
+}
+
+// Reset the game
+function resetGame() {
+
+    document.location.reload();
+
+}
+
+// Function to update the attempts counter
+function updateAttemptsCounter() {
+    const attemptsCounter = document.getElementById("attemptsCounter");
+    attemptsCounter.textContent = attempts;
 }
 
 initializeBoard();
