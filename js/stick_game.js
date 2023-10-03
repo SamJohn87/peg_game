@@ -19,10 +19,12 @@ const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModa
 const BTN_START_GAME = document.querySelector('#btnStartGame');
 const STOPWATCH = document.querySelector('.stopwatch');
 const BTN_PLAY = document.querySelector('#linkGameplay');
+const BTN_RESET_GAME = document.querySelector('#btnResetGame');
+const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
 let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
-let PEGS_LEFT = 14; // Initialize the number of pegs on the board
+let PEGS_LEFT; //number of pegs on the board
 let FIRST_PEG_HOLE = '15';
 
 // Show the gameplay modal when the page is loaded
@@ -34,26 +36,37 @@ document.addEventListener("DOMContentLoaded", function () {
 BTN_PLAY.addEventListener('click', showGameplay);
 const INIT_FUNCTION = () => initializeBoard(FIRST_PEG_HOLE);
 BTN_START_GAME.addEventListener('click', INIT_FUNCTION);
+BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
+BTN_PLAY_AGAIN.addEventListener('click', INIT_FUNCTION);
 
 
 
 function initializeBoard(firstPegHole) {
 
     GAMEPLAY_MODAL.hide();
-    console.log(firstPegHole);
-    
-    const pegContainer = document.querySelector('#pegHole15');
-    FUNCTION_DROP = (event) => drop(event);
-    FUNCTION_DRAG_OVER = (event) => dragOver(event);
-    pegContainer.addEventListener('drop', FUNCTION_DROP);
-    pegContainer.addEventListener('dragover', FUNCTION_DRAG_OVER);
-    pegContainer.classList.add('empty'); //identify hole as empty
-    EVENTS_ARR.push('#pegHole15', FUNCTION_DROP, FUNCTION_DRAG_OVER);
-    EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+    GAME_COMPLETE_MODAL.hide();
+    //console.log(firstPegHole);
 
+    //remove all pegs
+    removeAllPegs();
+
+    //reset
+    MOVES_ALLOWED = []; 
+    EVENTS_PEG_HOLE_ARR = [];
+    FIRST_MOVE = true;
+    PEGS_LEFT = 14;
+    updatePegsLeft();
+    clearInterval(INTERVAL);
+    STOPWATCH.textContent = "00:00";
+    SECONDS = 0
+
+    //display pegs in empty peg holes except the one selected
+    createPegImgs(firstPegHole);
+
+    //use array MOVE_OPTIONS to determine moves allowed based on empty holes
     for(let i = 0; i < MOVE_OPTIONS.length; i++) {
 
-        const found = MOVE_OPTIONS[i].find((element) => element === '15');
+        const found = MOVE_OPTIONS[i].find((element) => element === firstPegHole);
 
         if(found > 0){
 
@@ -63,6 +76,50 @@ function initializeBoard(firstPegHole) {
     }
 
     //console.log(MOVES_ALLOWED);
+
+}
+
+function createPegImgs(firstPegHole) {
+
+    //add peg in every hole except the one selected to start empty
+    for(let i = 1; i <= 15; i++) {
+
+        const pegContainer = document.querySelector(`#pegHole${i}`);
+        //console.log(pegContainer);
+        
+        if(i != Number(firstPegHole)) {
+
+            let pegImg = document.createElement("img");
+            pegImg.src = "images/peg.png";
+            pegImg.id = `peg${i}`;
+            pegImg.draggable = true;
+            pegImg.alt = "peg";
+
+            // Append the image to the div
+            pegContainer.appendChild(pegImg);
+            //console.log(`peg ${i} created`);
+
+            pegImg.addEventListener('dragstart', (event) => dragStart(event));
+
+        } else {
+
+            //add event listener to empty hole selected
+            //console.log(pegContainer);
+            FUNCTION_DROP = (event) => drop(event);
+            FUNCTION_DRAG_OVER = (event) => dragOver(event);
+            pegContainer.addEventListener('drop', FUNCTION_DROP);
+            pegContainer.addEventListener('dragover', FUNCTION_DRAG_OVER);
+            pegContainer.classList.add('empty'); //identify hole as empty
+            EVENTS_ARR.push(`#pegHole${firstPegHole}`, FUNCTION_DROP, FUNCTION_DRAG_OVER);
+            EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+            EVENTS_ARR = [];
+
+        }
+
+    }
+
+    //console.log(EVENTS_ARR);
+    //console.log(`first ${EVENTS_PEG_HOLE_ARR}`);
 
 }
 
@@ -110,7 +167,7 @@ function drop(event) {
 
         //console.log(MOVE_OPTIONS[moveAlowedIdx]);
 
-        const data = event.dataTransfer.getData("text");
+        const data = event.dataTransfer.getData("text/plain");
         //get the number of the hole in which the peg is dropped
         const toHole = event.target.id;
         //extract the number part pegHole15 returns 15
@@ -122,7 +179,7 @@ function drop(event) {
 
         if(moveAllowed >= 0) {
 
-            //console.log(' ok ');
+            //console.log('test' + data);
             event.target.appendChild(document.getElementById(data));
             //call function to remove peg jumped over
             removePeg(FROM_HOLE_NUMBER[0],TO_HOLE_NUMBER[0]);
@@ -184,8 +241,6 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
 }
 
 function reinitializeBoard() {
-
-    //console.log('reinitialize board');    
     
     //remove events from peg holes
     for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
@@ -204,6 +259,7 @@ function reinitializeBoard() {
     //locate empty pegh holes
     const emptyHoles = document.querySelectorAll('.empty');
     setMoveAllowed(emptyHoles);
+    //console.log(EVENTS_PEG_HOLE_ARR);
 
 }
 
@@ -217,9 +273,9 @@ function setMoveAllowed(emptyHoles) {
         hole.addEventListener('drop', FUNCTION_DROP);
         hole.addEventListener('dragover', FUNCTION_DRAG_OVER);
         //save event definition for later removal
-        EVENTS_ARR = [];
         EVENTS_ARR.push(`#${hole.id}`, FUNCTION_DROP, FUNCTION_DRAG_OVER);
         EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+        EVENTS_ARR = []
 
         //set allowed moves based on empty peg holes 
         const pegHoleNumber = hole.id.match(/(\d+)/);
@@ -267,13 +323,6 @@ function startStopwatch() {
         const formattedTime = `${minutes.toString().padStart(2, '0')}:${remainderSeconds.toString().padStart(2, '0')}`;
         STOPWATCH.textContent = formattedTime;
     }, 1000);
-
-}
-
-// Reset the game
-function resetGame() {
-
-    document.location.reload();
 
 }
 
@@ -354,5 +403,32 @@ function showGameplay() {
     //hide start button 
     BTN_START_GAME.classList.add('d-none');
     GAMEPLAY_MODAL.show();
+
+}
+
+function removeAllPegs() {
+
+    for(let i = 1; i <= 15; i++) {
+
+        const pegContainer = document.querySelector(`#pegHole${i}`);
+        pegContainer.classList.remove('empty');
+        nodeChild = pegContainer.firstChild;
+
+        if(nodeChild) {
+
+            pegContainer.removeChild(nodeChild);
+
+        }
+
+    }
+
+     //remove events from peg holes
+     for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
+        
+        const pegContainer = document.querySelector(pegHoleEvent[0]);
+        pegContainer.removeEventListener('drop', pegHoleEvent[1]);
+        pegContainer.removeEventListener('dragover', pegHoleEvent[2]);
+        
+    }
 
 }
