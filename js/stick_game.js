@@ -11,21 +11,18 @@ let FUNCTION_DROP;
 let FUNCTION_DRAG_OVER;
 let FROM_HOLE_NUMBER = 0;
 let TO_HOLE_NUMBER = 0;
-let MOVES_ALLOWED = [];
-let IS_GAME_OVER = false;
-let MOVES_POSSIBLE = 0; //keeps track of how many moves are possible
-//console.log('javascript connected');
+let MOVES_ALLOWED = []; //keeps track of how many moves are possible
 
 const WRONG_MOVE_MODAL = new bootstrap.Modal(document.querySelector('#wrongMoveModal'));
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
-let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 const STOPWATCH = document.querySelector('.stopwatch');
+let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
 let PEGS_LEFT = 14; // Initialize the number of pegs on the board
 
-// Show the difficulty selection modal when the page is loaded
+// Show the gameplay modal when the page is loaded
 document.addEventListener("DOMContentLoaded", function () {
     GAMEPLAY_MODAL.show();
 });
@@ -75,18 +72,6 @@ function dragStart(event) {
    
 }
 
-//for mobile device interaction
-/*function touchStart(event) {
-
-    const draggedPeg = event.target.id;
-    //get the number of the hole from which the peg was taken
-    const draggedPegHole = document.querySelector(`#${draggedPeg}`).parentNode.id;
-    //extract the number part pegHole15 returns 15
-    FROM_HOLE_NUMBER = draggedPegHole.match(/(\d+)/);
-    event.dataTransfer.setData("text/plain", draggedPeg);
-   
-}*/
-
 function drop(event) {
 
     event.preventDefault();
@@ -94,7 +79,7 @@ function drop(event) {
     
     if(FIRST_MOVE) {
 
-         //start stopwatch
+        //start stopwatch
         startStopwatch();
         FIRST_MOVE = false;
 
@@ -184,16 +169,14 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     //reinitialize board events
     reinitializeBoard();
 
-    //check if game is over
-    checkGameOver();
 
 }
 
 function reinitializeBoard() {
 
-    //console.log('reinitialize board');
+    //console.log('reinitialize board');    
     
-    //remove events from peg hole
+    //remove events from peg holes
     for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
         
         const pegContainer = document.querySelector(pegHoleEvent[0]);
@@ -240,9 +223,10 @@ function setMoveAllowed(emptyHoles) {
                 //console.log('test ' + PEG_TO_REMOVE[i][findMoveIdx]);
                 //check if removal peg is present
                 const isEmpty = document.querySelector(`#pegHole${PEG_TO_REMOVE[i][findMoveIdx]}`).classList.contains('empty');
-                //console.log(isEmpty);
+                const isEmptyAdjacent = document.querySelector(`#pegHole${i+1}`).classList.contains('empty');
+                //console.log(`index ${i}.${findMoveIdx} for #pegHole${PEG_TO_REMOVE[i][findMoveIdx]} is empty ${isEmpty}`);
 
-                if(!isEmpty) {
+                if(!isEmpty && !isEmptyAdjacent) {
 
                     MOVES_ALLOWED.push(i);
 
@@ -253,7 +237,11 @@ function setMoveAllowed(emptyHoles) {
 
     }
 
-    //console.log('moves ' + MOVES_ALLOWED);
+    //console.log('moves ' + MOVES_ALLOWED.length);
+
+    if(MOVES_ALLOWED.length === 0) {
+        gameOver();
+    }
     //console.log(EVENTS_PEG_HOLE_ARR);
 
 }
@@ -284,69 +272,24 @@ function updatePegsLeft() {
     pegsLeftCounter.textContent = PEGS_LEFT;
 }
 
-function checkGameOver() {
+function gameOver() {
 
-    //console.log('game is over?');
-
-    //get all remaining pegs
-    const pegsleft = document.querySelectorAll('div.peg-hole:not(.empty');
-    MOVES_POSSIBLE = 0;
-    //console.log('pegsleft length ' + pegsleft.length);
-    
-    for(let peg of pegsleft) {
-
-        //console.log(peg.id);
-
-        //replica of some part of code from function setMoveAllowed
-        /*************************************************************/
-        const holeNumber = peg.id.match(/(\d+)/);
-        //console.log('number ' + holeNumber[0]);
-
-        for(let i = 0; i < MOVE_OPTIONS.length; i++) {
-
-            const findMoveIdx = MOVE_OPTIONS[i].findIndex((element) => element === holeNumber[0]);
-
-            if(findMoveIdx >= 0){
-
-                //console.log('test ' + PEG_TO_REMOVE[i][findMoveIdx]);
-                //check if removal peg is present
-                const isEmpty = document.querySelector(`#pegHole${PEG_TO_REMOVE[i][findMoveIdx]}`).classList.contains('empty');
-                //console.log(isEmpty);
-
-                if(!isEmpty) {
-
-                    MOVES_POSSIBLE++;
-                    //console.log('moves available than what ?');
-
-                } /*else {
-                    //console.log('no moves for available for ' + i)
-                    console.log('no moves for available for ' + holeNumber[0])
-                }*/
-
-            }
-        }
-         /*************************************************************/
-
-    }
-
-    if(MOVES_POSSIBLE === 0) {
-
-        //console.log('game over');
-        clearInterval(INTERVAL);
-        showGameCompletedModal();
-
-    }
+    //stop stopwatch and show end of game modal
+    clearInterval(INTERVAL);
+    showGameCompletedModal();
     
 }
 
 // Function to show the game completion modal
 function showGameCompletedModal() {
+
     const modalTime = document.querySelector("#modalTime");
     const modalPegsLeft = document.querySelector("#pegsLeft");
     const modalSkillMessage = document.querySelector("#skillMessage");
     const modalSkillMsgDesc = document.querySelector("#skillMessageDescription");
     modalTime.textContent = STOPWATCH.textContent;
 
+    //define message to display based on the number of pegs left
     if(PEGS_LEFT >= 5) {
 
         modalPegsLeft.textContent = `${PEGS_LEFT} pegs left.`;
