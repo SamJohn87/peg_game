@@ -9,6 +9,7 @@ let EVENTS_PEG_HOLE_ARR = [];
 //1 = 0; 2 = 1 index
 let FUNCTION_DROP;
 let FUNCTION_DRAG_OVER;
+let FUNCTION_START = [];
 let FROM_HOLE_NUMBER = 0;
 let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = []; //keeps track of how many moves are possible
@@ -16,16 +17,18 @@ let MOVES_ALLOWED = []; //keeps track of how many moves are possible
 const WRONG_MOVE_MODAL = new bootstrap.Modal(document.querySelector('#wrongMoveModal'));
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
+const PEG_HOLE_SELECT_MODAL = new bootstrap.Modal(document.querySelector('#pegHoleSelectModal'));
 const BTN_START_GAME = document.querySelector('#btnStartGame');
 const STOPWATCH = document.querySelector('.stopwatch');
 const BTN_PLAY = document.querySelector('#linkGameplay');
 const BTN_RESET_GAME = document.querySelector('#btnResetGame');
 const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
+const BTN_GOT_IT = document.querySelector('#btnGotIt');
 let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
 let PEGS_LEFT; //number of pegs on the board
-let FIRST_PEG_HOLE = '15';
+
 
 // Show the gameplay modal when the page is loaded
 document.addEventListener("DOMContentLoaded", function () {
@@ -34,18 +37,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //btn eventlisteners
 BTN_PLAY.addEventListener('click', showGameplay);
-const INIT_FUNCTION = () => initializeBoard(FIRST_PEG_HOLE);
-BTN_START_GAME.addEventListener('click', INIT_FUNCTION);
-BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
-BTN_PLAY_AGAIN.addEventListener('click', INIT_FUNCTION);
+BTN_GOT_IT.addEventListener('click', selectHole);
+BTN_START_GAME.addEventListener('click', startGame);
 
+function startGame() {
+
+    GAMEPLAY_MODAL.hide();
+    PEG_HOLE_SELECT_MODAL.show();
+
+    //add event listener on every hole of the board to select the starting hole
+    for(let i = 1; i <= 15; i++) {
+
+        const pegContainer = document.querySelector(`#pegHole${i}`);
+        const function_start = () => initializeBoard(`${i}`);
+        pegContainer.addEventListener('click', function_start);
+        FUNCTION_START.push(function_start); //index 0 is for hole1
+
+    }
+
+}
+
+function selectHole() {
+
+    PEG_HOLE_SELECT_MODAL.hide();
+
+}
 
 
 function initializeBoard(firstPegHole) {
 
-    GAMEPLAY_MODAL.hide();
     GAME_COMPLETE_MODAL.hide();
-    //console.log(firstPegHole);
+    console.log(firstPegHole);
+
+    const INIT_FUNCTION = () => initializeBoard(firstPegHole);
+    BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
+    BTN_PLAY_AGAIN.addEventListener('click', INIT_FUNCTION);
 
     //remove all pegs
     removeAllPegs();
@@ -420,10 +446,14 @@ function removeAllPegs() {
 
         }
 
-    }
+        //remove click selection event
+        pegContainer.removeEventListener('click', FUNCTION_START[i-1])
 
-     //remove events from peg holes
-     for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
+    }
+    //console.log(FUNCTION_START);
+
+    //remove events from peg holes
+    for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
         
         const pegContainer = document.querySelector(pegHoleEvent[0]);
         pegContainer.removeEventListener('drop', pegHoleEvent[1]);
