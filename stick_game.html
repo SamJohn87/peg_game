@@ -14,6 +14,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="gamePlayModalLabel">How to play Peg Solitaire Game?</h5>
+                    <button type="button" id="btnCloseGameplay" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h4>Objective:</h4>
@@ -25,7 +26,7 @@
                         <li>The peg that was jumped over is removed from the board.</li>
                     </ul>
                     <div class="mt-3 d-grid gap-2">                        
-                        <button class="btn btn-custom" onclick="initializeBoard()">Start Game</button>
+                        <button id="btnStartGame" class="btn btn-custom">Start Game</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +91,7 @@
                     </div>      
                 </div>
             </div>
-            <div><a href="#" onclick="document.location.reload()"><b>Show gameplay</b></a></div>
+            <div><a href="#" id="linkGameplay"><b>Show gameplay</b></a></div>
         </div>
     </div>
     <!-- Modal for game completion -->

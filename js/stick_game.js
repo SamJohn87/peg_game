@@ -16,20 +16,31 @@ let MOVES_ALLOWED = []; //keeps track of how many moves are possible
 const WRONG_MOVE_MODAL = new bootstrap.Modal(document.querySelector('#wrongMoveModal'));
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
+const BTN_START_GAME = document.querySelector('#btnStartGame');
 const STOPWATCH = document.querySelector('.stopwatch');
+const BTN_PLAY = document.querySelector('#linkGameplay');
 let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
 let PEGS_LEFT = 14; // Initialize the number of pegs on the board
+let FIRST_PEG_HOLE = '15';
 
 // Show the gameplay modal when the page is loaded
 document.addEventListener("DOMContentLoaded", function () {
     GAMEPLAY_MODAL.show();
 });
 
-function initializeBoard() {
+//btn eventlisteners
+BTN_PLAY.addEventListener('click', showGameplay);
+const INIT_FUNCTION = () => initializeBoard(FIRST_PEG_HOLE);
+BTN_START_GAME.addEventListener('click', INIT_FUNCTION);
+
+
+
+function initializeBoard(firstPegHole) {
 
     GAMEPLAY_MODAL.hide();
+    console.log(firstPegHole);
     
     const pegContainer = document.querySelector('#pegHole15');
     FUNCTION_DROP = (event) => drop(event);
@@ -287,7 +298,23 @@ function showGameCompletedModal() {
     const modalPegsLeft = document.querySelector("#pegsLeft");
     const modalSkillMessage = document.querySelector("#skillMessage");
     const modalSkillMsgDesc = document.querySelector("#skillMessageDescription");
-    modalTime.textContent = STOPWATCH.textContent;
+
+    let inputTime = STOPWATCH.textContent.split(':');
+    let minutes = parseInt(inputTime[0]);
+    let seconds = parseInt(inputTime[1]);
+    let timeMsg = '';
+
+    if(minutes > 0) {
+
+        timeMsg = `${minutes} minutes and ${seconds} seconds`;
+
+    } else {
+
+        timeMsg = `${seconds} seconds`;
+
+    }
+ 
+    modalTime.textContent = timeMsg;
 
     //define message to display based on the number of pegs left
     if(PEGS_LEFT >= 5) {
@@ -317,4 +344,15 @@ function showGameCompletedModal() {
     }
     
     GAME_COMPLETE_MODAL.show();
+}
+
+function showGameplay() {
+
+    //display close button
+    const btnCloseGameplay = document.querySelector('#btnCloseGameplay');
+    btnCloseGameplay.classList.remove('d-none');
+    //hide start button 
+    BTN_START_GAME.classList.add('d-none');
+    GAMEPLAY_MODAL.show();
+
 }
