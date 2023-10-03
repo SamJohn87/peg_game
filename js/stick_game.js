@@ -67,7 +67,7 @@ function selectHole() {
 function initializeBoard(firstPegHole) {
 
     GAME_COMPLETE_MODAL.hide();
-    console.log(firstPegHole);
+    //console.log(firstPegHole);
 
     const INIT_FUNCTION = () => initializeBoard(firstPegHole);
     BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
