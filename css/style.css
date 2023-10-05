@@ -3,6 +3,8 @@ body {
     text-align: center;
     background-color:#ebd6bb;
     color: #65451F;
+    background-image: url('/images/joel-jasmin-forestbird-xzPMUMDDsfk-unsplash.jpg');
+    background-size: cover;
 }
 
 .peg-hole {
@@ -49,7 +51,7 @@ img {
 
 .info-board {
     border-style: solid;
-    background-color:white;
+    background-color:rgb(255, 255, 255,0.7);
     border-color: #b58a62;
     text-align: center;
     padding-top: 10px;
@@ -58,7 +60,7 @@ img {
 
 .pegs-container {
     border-style: solid;
-    background-color:white;
+    background-color:rgb(255, 255, 255,0.7);
     border-color: #b58a62;
     text-align: center;
     padding-top: 10px;
@@ -70,9 +72,5 @@ img {
 }
 
 a {
-    color: #65451F;
-}
-
-a:hover {
     color: #b58a62;
 }
