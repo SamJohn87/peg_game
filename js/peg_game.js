@@ -7,14 +7,13 @@ let EVENTS_ARR = [];
 let EVENTS_PEG_HOLE_ARR = [];
 
 //1 = 0; 2 = 1 index
-let FUNCTION_DROP;
+let FUNCTION_PEG;
 let FUNCTION_DRAG_OVER;
 let FUNCTION_START = [];
 let FROM_HOLE_NUMBER = 0;
 let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = []; //keeps track of how many moves are possible
 
-const WRONG_MOVE_MODAL = new bootstrap.Modal(document.querySelector('#wrongMoveModal'));
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
 const PEG_HOLE_SELECT_MODAL = new bootstrap.Modal(document.querySelector('#pegHoleSelectModal'));
@@ -67,7 +66,7 @@ function selectHole() {
 function initializeBoard(firstPegHole) {
 
     GAME_COMPLETE_MODAL.hide();
-    console.log(firstPegHole);
+    //console.log(firstPegHole);
 
     const INIT_FUNCTION = () => initializeBoard(firstPegHole);
     BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
@@ -97,11 +96,18 @@ function initializeBoard(firstPegHole) {
         if(found > 0){
 
             MOVES_ALLOWED.push(i);
-
+            //add event listener on pegs which can be moved
+            const pegToMove = document.querySelector(`#pegHole${i+1}`).firstElementChild;
+            FUNCTION_PEG = () => movePeg(i);
+            pegToMove.addEventListener('click', FUNCTION_PEG);
+            EVENTS_ARR.push(`#pegHole${i+1}`, FUNCTION_PEG);
+            EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+            EVENTS_ARR =[];
         }
     }
 
-    //console.log(MOVES_ALLOWED);
+    console.log(MOVES_ALLOWED);
+    //console.log(EVENTS_PEG_HOLE_ARR);
 
 }
 
@@ -118,27 +124,16 @@ function createPegImgs(firstPegHole) {
             let pegImg = document.createElement("img");
             pegImg.src = "images/peg.png";
             pegImg.id = `peg${i}`;
-            pegImg.draggable = true;
+            //pegImg.draggable = true;
             pegImg.alt = "peg";
 
             // Append the image to the div
             pegContainer.appendChild(pegImg);
             //console.log(`peg ${i} created`);
 
-            pegImg.addEventListener('dragstart', (event) => dragStart(event));
-
         } else {
 
-            //add event listener to empty hole selected
-            //console.log(pegContainer);
-            FUNCTION_DROP = (event) => drop(event);
-            FUNCTION_DRAG_OVER = (event) => dragOver(event);
-            pegContainer.addEventListener('drop', FUNCTION_DROP);
-            pegContainer.addEventListener('dragover', FUNCTION_DRAG_OVER);
             pegContainer.classList.add('empty'); //identify hole as empty
-            EVENTS_ARR.push(`#pegHole${firstPegHole}`, FUNCTION_DROP, FUNCTION_DRAG_OVER);
-            EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
-            EVENTS_ARR = [];
 
         }
 
@@ -149,100 +144,84 @@ function createPegImgs(firstPegHole) {
 
 }
 
-function dragOver(event) {
-
-    event.preventDefault();
-
-}
-
-function dragStart(event) {
-
-    const draggedPeg = event.target.id;
-    //get the number of the hole from which the peg was taken
-    const draggedPegHole = document.querySelector(`#${draggedPeg}`).parentNode.id;
-    //extract the number part pegHole15 returns 15
-    FROM_HOLE_NUMBER = draggedPegHole.match(/(\d+)/);
-    event.dataTransfer.setData("text/plain", draggedPeg);
-   
-}
-
-function drop(event) {
-
-    event.preventDefault();
-    let alertMessage = false;
+function movePeg(pegHole) {
     
-    if(FIRST_MOVE) {
+    //console.log('move the peg please');
+        
+    //console.log(MOVE_OPTIONS[pegHole]);
+    const moves = MOVE_OPTIONS[pegHole];
+    let possibility = [];
 
-        //start stopwatch
-        startStopwatch();
-        FIRST_MOVE = false;
-
+    //check how many moves are possible
+    for(let i = 0; i < MOVE_OPTIONS[pegHole].length; i++) {
+        //console.log(document.querySelector(`#pegHole${moves[i]}`).classList.contains('empty') + ' ' + moves[i]);
+        if(document.querySelector(`#pegHole${moves[i]}`).classList.contains('empty')) {
+            possibility.push(moves[i]);
+        }
     }
 
-    //console.log('move array ' + MOVES_ALLOWED);
-    //console.log('from hole number ' + FROM_HOLE_NUMBER[0]);
+    console.log(possibility);
+    console.log(EVENTS_PEG_HOLE_ARR[0]);
 
-    const moveAlowedIdx = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER[0]);
-    //console.log('moveallowedidx ' + moveAlowedIdx);
+    if(possibility.length === 1) { //only one move possible, so just move the peg and remove the adjacent peg
 
-    const moveFound = MOVES_ALLOWED.findIndex((element) => element === moveAlowedIdx);
-    //console.log('move allowed ' + moveAlowed);
+        const pegFromContainer = document.querySelector(`#pegHole${pegHole+1}`);
+        const pegToMove = pegFromContainer.firstElementChild;
+        //console.log('first element ' + pegToMove.id);
+        const pegToContainer = document.querySelector(`#pegHole${possibility[0]}`);
 
-    //check if move is allowed
-    if(moveFound >= 0) {
+        //remove event listener before moving peg
+        for(let event_f of EVENTS_PEG_HOLE_ARR) {
+           
+            if(event_f[0] === `#${pegFromContainer.id}`) {
+                
+                pegToMove.removeEventListener('click', event_f[1]);
 
-        //console.log(MOVE_OPTIONS[moveAlowedIdx]);
+            }
 
-        const data = event.dataTransfer.getData("text/plain");
-        //get the number of the hole in which the peg is dropped
-        const toHole = event.target.id;
-        //extract the number part pegHole15 returns 15
-        TO_HOLE_NUMBER = toHole.match(/(\d+)/);
+        }
+        
+        //move peg
+        pegToContainer.appendChild(pegToMove);
 
-        const moveAllowed = MOVE_OPTIONS[moveAlowedIdx].findIndex((element) => element === TO_HOLE_NUMBER[0]);
-        //console.log('TO_HOLE_NUMBER ' + TO_HOLE_NUMBER[0]);
-        //console.log('moveAllowed ' + moveAllowed);
+        //remove adjacent peg
+        removePeg(`${(pegHole+1)}`,`${possibility[0]}`);
 
-        if(moveAllowed >= 0) {
+    } else { //more than one move possible
 
-            //console.log('test' + data);
-            event.target.appendChild(document.getElementById(data));
-            //call function to remove peg jumped over
-            removePeg(FROM_HOLE_NUMBER[0],TO_HOLE_NUMBER[0]);
+        //change background of empty hole
+        for(let i = 0; i < possibility.length; i++) {
+            
+            const pegHoleReceiver = document.querySelector(`#pegHole${possibility[i]}`);
+            pegHoleReceiver.classList.add('possibility');
 
-        } else {
-
-            alertMessage = true;
+            //add event listener
+            
 
         }
 
-    } else {
-
-        alertMessage = true;
-
-    }
-
-    if(alertMessage) {
-
-        WRONG_MOVE_MODAL.show();
 
     }
 
 }
 
-function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
+function removePeg(from_hole_number,to_hole_number) {
     
-    //console.log(`to ${TO_HOLE_NUMBER}`);
+    console.log(typeof(from_hole_number));
+    console.log(`to ${to_hole_number}`);
+    console.log(PEG_HOLE);
+    
     
     //locate array index for hole where peg was dragged from
-    const foundIdxFrom = PEG_HOLE.findIndex((element) => element === FROM_HOLE_NUMBER);
+    const foundIdxFrom = PEG_HOLE.findIndex((element) => element === from_hole_number);
+    console.log(foundIdxFrom);
     //locate array index for hole where peg was dropped in based on where it was dragged from
-    const foundIdxFromTo = MOVE_OPTIONS[foundIdxFrom].findIndex((element) => element === TO_HOLE_NUMBER);
+    const foundIdxTo = MOVE_OPTIONS[foundIdxFrom].findIndex((element) => element === to_hole_number);
 
     //locate array index of hole where peg need to be remove
-    const foundPegToRemove = PEG_TO_REMOVE[foundIdxFrom][foundIdxFromTo];
+    const foundPegToRemove = PEG_TO_REMOVE[foundIdxFrom][foundIdxTo];
     
-    //console.log('remove '+ foundPegToRemove);
+    console.log('remove '+ foundPegToRemove);
 
     //remove peg from hole
     const pegHoleContainer = document.querySelector(`#pegHole${foundPegToRemove}`);
@@ -251,10 +230,10 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
 
     //declare hole empty
     pegHoleContainer.classList.add('empty');
-    document.querySelector(`#pegHole${FROM_HOLE_NUMBER}`).classList.add('empty');
+    document.querySelector(`#pegHole${from_hole_number}`).classList.add('empty');
 
     //remove class empty to hole receiving peg
-    document.querySelector(`#pegHole${TO_HOLE_NUMBER}`).classList.remove('empty');
+    document.querySelector(`#pegHole${to_hole_number}`).classList.remove('empty');
 
     //update pegs counter
     PEGS_LEFT--;
@@ -263,29 +242,37 @@ function removePeg(FROM_HOLE_NUMBER,TO_HOLE_NUMBER) {
     //reinitialize board events
     reinitializeBoard();
 
-
 }
 
 function reinitializeBoard() {
+
+    console.log('reinitialize board');
+    console.log(EVENTS_PEG_HOLE_ARR);
     
     //remove events from peg holes
     for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
-        
-        const pegContainer = document.querySelector(pegHoleEvent[0]);
-        pegContainer.removeEventListener('drop', pegHoleEvent[1]);
-        pegContainer.removeEventListener('dragover', pegHoleEvent[2]);
+
+        console.log(pegHoleEvent[0]);
+        console.log(pegHoleEvent[1]);
+        const pegToChange = document.querySelector(pegHoleEvent[0]).firstElementChild;
+
+        if(pegToChange) {
+
+            pegToChange.removeEventListener('click', pegHoleEvent[1]);
+
+        }
         
     }
 
     //empty global event listener arrays
     EVENTS_PEG_HOLE_ARR = [];
-    EVENTS_ARR = [];
     MOVES_ALLOWED = [];
 
     //locate empty pegh holes
     const emptyHoles = document.querySelectorAll('.empty');
+    //console.log(emptyHoles);
     setMoveAllowed(emptyHoles);
-    //console.log(EVENTS_PEG_HOLE_ARR);
+
 
 }
 
@@ -294,18 +281,18 @@ function setMoveAllowed(emptyHoles) {
     for(let hole of emptyHoles) {
         
         //add ondrop and ondragover events to empty peg holes
-        FUNCTION_DROP = (event) => drop(event);
+        /*FUNCTION_DROP = (event) => drop(event);
         FUNCTION_DRAG_OVER = (event) => dragOver(event);
         hole.addEventListener('drop', FUNCTION_DROP);
         hole.addEventListener('dragover', FUNCTION_DRAG_OVER);
         //save event definition for later removal
         EVENTS_ARR.push(`#${hole.id}`, FUNCTION_DROP, FUNCTION_DRAG_OVER);
         EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
-        EVENTS_ARR = []
+        EVENTS_ARR = []*/
 
         //set allowed moves based on empty peg holes 
         const pegHoleNumber = hole.id.match(/(\d+)/);
-        //console.log('number ' + pegHoleNumber[0]);
+        console.log('number ' + pegHoleNumber[0]);
 
         for(let i = 0; i < MOVE_OPTIONS.length; i++) {
 
@@ -323,10 +310,18 @@ function setMoveAllowed(emptyHoles) {
 
                     MOVES_ALLOWED.push(i);
 
+                    //add event listener on pegs which can be moved
+                    const pegToMove = document.querySelector(`#pegHole${i+1}`).firstElementChild;
+                    FUNCTION_PEG = () => movePeg(i);
+                    pegToMove.addEventListener('click', FUNCTION_PEG);
+                    EVENTS_ARR.push(`#pegHole${i+1}`, FUNCTION_PEG);
+                    EVENTS_PEG_HOLE_ARR.push(EVENTS_ARR);
+                    EVENTS_ARR =[];
+
                 }
 
             }
-        }     
+        }  
 
     }
 
@@ -453,12 +448,12 @@ function removeAllPegs() {
     //console.log(FUNCTION_START);
 
     //remove events from peg holes
-    for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
+    /*for(let pegHoleEvent of EVENTS_PEG_HOLE_ARR) {
         
         const pegContainer = document.querySelector(pegHoleEvent[0]);
         pegContainer.removeEventListener('drop', pegHoleEvent[1]);
         pegContainer.removeEventListener('dragover', pegHoleEvent[2]);
         
-    }
+    }*/
 
 }
