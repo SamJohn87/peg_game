@@ -23,10 +23,9 @@ body {
     text-align: center;
 }
 
-img {
+.peg {
     width: 100%;
     height: 100%;
-    cursor: pointer;
 }
 
 .btn-custom {
@@ -77,4 +76,13 @@ a {
 
 .possibility {
     background-color:green;
+}
+
+.moveable:hover {
+    background-color: #65451F;
+    cursor: pointer;
+}
+
+.selected {
+    background-color: #65451F;
 }
