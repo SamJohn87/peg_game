@@ -15,33 +15,36 @@ let TO_HOLE_NUMBER = 0;
 let MOVES_ALLOWED = []; //keeps track of how many moves are possible
 
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
-const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gamePlayModal'));
+const OBJECTIVE_MODAL = new bootstrap.Modal(document.querySelector('#objectiveModal'));
 const PEG_HOLE_SELECT_MODAL = new bootstrap.Modal(document.querySelector('#pegHoleSelectModal'));
+const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gameplayModal'));
 const BTN_START_GAME = document.querySelector('#btnStartGame');
 const STOPWATCH = document.querySelector('.stopwatch');
 const BTN_PLAY = document.querySelector('#linkGameplay');
 const BTN_RESET_GAME = document.querySelector('#btnResetGame');
 const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
 const BTN_GOT_IT = document.querySelector('#btnGotIt');
+const BTN_LETS_GO = document.querySelector('#btnLetsGo');
 let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
 let PEGS_LEFT; //number of pegs on the board
 
 
-// Show the gameplay modal when the page is loaded
+// Show the objective modal when the page is loaded
 document.addEventListener("DOMContentLoaded", function () {
-    GAMEPLAY_MODAL.show();
+    OBJECTIVE_MODAL.show();
 });
 
 //btn eventlisteners
 BTN_PLAY.addEventListener('click', showGameplay);
 BTN_GOT_IT.addEventListener('click', selectHole);
 BTN_START_GAME.addEventListener('click', startGame);
+BTN_LETS_GO.addEventListener('click', closeGameplayModal);
 
 function startGame() {
 
-    GAMEPLAY_MODAL.hide();
+    OBJECTIVE_MODAL.hide();
     PEG_HOLE_SELECT_MODAL.show();
 
     //add event listener on every hole of the board to select the starting hole
@@ -62,18 +65,25 @@ function selectHole() {
 
 }
 
+function closeGameplayModal() {
+
+    GAMEPLAY_MODAL.hide();
+
+}
+
 
 function initializeBoard(firstPegHole) {
 
-    GAME_COMPLETE_MODAL.hide();
-    //console.log(firstPegHole);
+    //console.log(FIRST_MOVE);
 
-    const INIT_FUNCTION = () => initializeBoard(firstPegHole);
-    BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
-    BTN_PLAY_AGAIN.addEventListener('click', INIT_FUNCTION);
+    if (FIRST_MOVE) {
 
-    //remove all pegs
-    removeAllPegs();
+        GAMEPLAY_MODAL.show();
+        const INIT_FUNCTION = () => initializeBoard(firstPegHole);
+        BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
+        BTN_PLAY_AGAIN.addEventListener('click', INIT_FUNCTION);
+
+    }
 
     //reset
     MOVES_ALLOWED = []; 
@@ -84,6 +94,16 @@ function initializeBoard(firstPegHole) {
     clearInterval(INTERVAL);
     STOPWATCH.textContent = "00:00";
     SECONDS = 0
+
+    GAME_COMPLETE_MODAL.hide();
+    
+    //console.log(firstPegHole); 
+
+    
+
+    //remove all pegs
+    removeAllPegs();
+    
 
     //display pegs in empty peg holes except the one selected
     createPegImgs(firstPegHole);
@@ -156,7 +176,7 @@ function movePeg(pegHoleIdx) {
     const allselected = document.querySelectorAll('.selected');
     allselected.forEach((element) => element.classList.remove('selected'));
 
-    if(FIRST_MOVE === true) {
+    if(FIRST_MOVE) {
         startStopwatch();
         FIRST_MOVE = false;
     }
@@ -486,11 +506,6 @@ function showGameCompletedModal() {
 
 function showGameplay() {
 
-    //display close button
-    const btnCloseGameplay = document.querySelector('#btnCloseGameplay');
-    btnCloseGameplay.classList.remove('d-none');
-    //hide start button 
-    BTN_START_GAME.classList.add('d-none');
     GAMEPLAY_MODAL.show();
 
 }

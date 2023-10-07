@@ -28,6 +28,11 @@ body {
     height: 100%;
 }
 
+.small-peg {
+    width: 35px;
+    height: 35px;
+}
+
 .btn-custom {
     padding: 10px 20px;
     border: none;

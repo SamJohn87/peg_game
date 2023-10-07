@@ -8,25 +8,16 @@
     <title>Triangle Peg Game</title>
 </head>
 <body>
-    <!-- Modal for gameplay explanation -->
-    <div class="modal fade" id="gamePlayModal" tabindex="-1" aria-labelledby="gamePlayModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <!-- Modal for Objective -->
+    <div class="modal fade" id="objectiveModal" tabindex="-1" aria-labelledby="objectiveModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="gamePlayModalLabel">How to play Peg Solitaire Game?</h5>
-                    <button type="button" id="btnCloseGameplay" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="objectiveModalLabel">Objective:</h5>
+                    <button type="button" id="btnCloseObjective" class="btn-close d-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Objective:</h4>
                     <p>The objective of the Triangle Peg Game is to remove as many pegs as possible by jumping over them with other pegs, until no more moves are possible, or you've cleared the board except for one peg.</p>
-                    <h4>Gameplay:</h4>
-                    <ul>
-                        <li>Pegs can only move by jumping over adjacent pegs to vacant holes.</li>
-                        <li>You can jump horizontally or diagonally over an adjacent peg to an empty hole.</li>
-                        <li>The peg that was jumped over is removed from the board.</li>
-                    </ul>
-                    <p>When there are multiple possible moves for the same peg, simply tap or click on the green hole to execute the desired move.</p>
-                    <img clas src="https://samjohn87.github.io/peg_game/images/multiple_choices.png" class="img-fluid" alt="Responsive image">
                     <div class="mt-3 d-grid gap-2">                        
                         <button id="btnStartGame" class="btn-custom">Start Game</button>
                     </div>
@@ -34,12 +25,12 @@
             </div>
         </div>
     </div>
-    <!-- The Modal -->
+    <!-- The Modal to pick a hole instrcutions -->
     <div class="modal fade" id="pegHoleSelectModal" tabindex="-1" role="dialog" aria-labelledby="pegHoleSelectModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Select where to start game.</h5>
+                    <h5 class="modal-title" id="pegHoleSelectModalLabel">Select where to start game.</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -48,6 +39,33 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btnGotIt" class="btn-custom">Got it</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal for gameplay -->
+    <div class="modal fade" id="gameplayModal" tabindex="-1" role="dialog" aria-labelledby="gameplayModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gameplayModalLabel">Gameplay:</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>
+                            <p>Click or tap on a peg <img src="https://samjohn87.github.io/peg_game/images/peg.png" class="small-peg" alt="peg image"> to move it over an adjacent peg to a vacant hole <img src="https://samjohn87.github.io/peg_game/images/empty_hole.png" class="small-peg" alt="empty hole image">.</p>
+                            <p><img src="https://samjohn87.github.io/peg_game/images/possible_moves.png" class="img-fluid" alt="moves example image"></p>
+                        </li>
+                        <li>The peg that was jumped over is removed from the board.</li>
+                        <li>
+                            <p>When there are multiple possible moves for the same peg, simply tap or click on the green hole to execute the desired move.</p>
+                            <p><img clas src="https://samjohn87.github.io/peg_game/images/multiple_choices.png" class="img-fluid" alt="Responsive image"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnLetsGo" class="btn-custom">Let's Go!</button>
                 </div>
             </div>
         </div>
