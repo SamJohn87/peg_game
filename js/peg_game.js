@@ -477,7 +477,7 @@ function showGameCompletedModal() {
     //define message to display based on the number of pegs left
     if(PEGS_LEFT >= 5) {
 
-        modalPegsLeft.textContent = `${PEGS_LEFT} pegs left.`;
+        modalPegsLeft.textContent = `${PEGS_LEFT} pegs left`;
         modalSkillMessage.innerHTML = `Your level is: <b>Peg Solitaire Beginner</b>`;
         modalSkillMsgDesc.innerHTML = 'Beginners have a basic understanding of the game but still have room for improvement in terms of strategy.';
 
