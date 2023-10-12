@@ -1,3 +1,28 @@
+class AudioController {
+    constructor() {
+        this.holeSelection = new Audio('audio/hole_selection.mp3');
+        this.move = new Audio('audio/peg_moving.mp3');
+        this.multipleChoices = new Audio('audio/multiple_choices.mp3');
+        this.endGame = new Audio('audio/end_game.mp3');
+    }
+
+    holeSelectionAudio() {
+        this.holeSelection.play();
+    }
+
+    movePegAudio() {
+        this.move.play();
+    }
+
+    multipleChoicesAudio() {
+        this.multipleChoices.play();
+    }
+
+    endGameAudio() {
+        this.endGame.play();
+    }
+}
+
 //GLOBAL VARIABLES
 const PEG_HOLE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
 const MOVE_OPTIONS = [['3','10'], ['4', '11'], ['1', '5', '10', '12'], ['2', '11'], ['3', '12'], ['8', '13'], ['9', '14'], ['6', '13'], ['7', '14'], ['1', '3', '12', '15'], ['2', '4'], ['3', '5', '10', '15'], ['6', '8'], ['7', '9'], ['10', '12']];
@@ -25,10 +50,17 @@ const BTN_RESET_GAME = document.querySelector('#btnResetGame');
 const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
 const BTN_GOT_IT = document.querySelector('#btnGotIt');
 const BTN_LETS_GO = document.querySelector('#btnLetsGo');
+const BTN_AUDIO = document.querySelector('#audioControl');
+const AUDIO_CONTAINER = document.querySelector('#audioControl');
+const IMG_AUDIO = AUDIO_CONTAINER.firstElementChild;
 let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
 let SECONDS = 0;
 let INTERVAL;
 let PEGS_LEFT; //number of pegs on the board
+
+
+//create AudioController to control sound effects during game
+const soundEffect = new AudioController();
 
 
 // Show the objective modal when the page is loaded
@@ -41,6 +73,7 @@ BTN_PLAY.addEventListener('click', showGameplay);
 BTN_GOT_IT.addEventListener('click', selectHole);
 BTN_START_GAME.addEventListener('click', startGame);
 BTN_LETS_GO.addEventListener('click', closeGameplayModal);
+BTN_AUDIO.addEventListener('click', controlAudio);
 
 function startGame() {
 
@@ -78,6 +111,10 @@ function initializeBoard(firstPegHole) {
 
     if (FIRST_MOVE) {
 
+        if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+            soundEffect.holeSelectionAudio();
+        }
+        
         GAMEPLAY_MODAL.show();
         const INIT_FUNCTION = () => initializeBoard(firstPegHole);
         BTN_RESET_GAME.addEventListener('click', INIT_FUNCTION);
@@ -98,8 +135,6 @@ function initializeBoard(firstPegHole) {
     GAME_COMPLETE_MODAL.hide();
     
     //console.log(firstPegHole); 
-
-    
 
     //remove all pegs
     removeAllPegs();
@@ -222,15 +257,25 @@ function movePeg(pegHoleIdx) {
         }
         
         //move peg
-        pegToContainer.appendChild(pegToMove);
+        setTimeout(() => {
+            pegToContainer.appendChild(pegToMove);
+            if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+                soundEffect.movePegAudio();
+            }
+            //remove adjacent peg
+            removePeg(`${pegHole}`,`${possibility[0]}`);
+        }, 200);
+        
 
-        //remove adjacent peg
-        removePeg(`${pegHole}`,`${possibility[0]}`);
+        
 
     } else { //more than one move possible
 
         //keep peg to move evident to user
         pegToMove.classList.add('selected');
+        if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+            soundEffect.multipleChoicesAudio();
+        }
 
         //change background of empty hole
         //console.log('possibilities ' + possibility.length);
@@ -274,10 +319,17 @@ function receivePeg(fromPegHole, toPegHole) {
     }
     
     //move peg
-    pegToContainer.appendChild(pegToMove);
+    setTimeout(() => {
+        pegToContainer.appendChild(pegToMove);
+        if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+            soundEffect.movePegAudio();
+        }
+        //remove adjacent peg
+        removePeg(`${fromPegHole}`,`${toPegHole}`);
+    }, 200);
+    
 
-    //remove adjacent peg
-    removePeg(`${fromPegHole}`,`${toPegHole}`);
+    
 
 }
 
@@ -501,7 +553,13 @@ function showGameCompletedModal() {
 
     }
     
-    GAME_COMPLETE_MODAL.show();
+    setTimeout(() => {
+        if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+            soundEffect.endGameAudio();
+        }
+        GAME_COMPLETE_MODAL.show();
+    }, 500);
+    
 }
 
 function showGameplay() {
@@ -533,5 +591,17 @@ function removeAllPegs() {
 
     }
     //console.log(FUNCTION_START);
+
+}
+
+function controlAudio() {
+
+    if(IMG_AUDIO.classList.contains('bi-volume-up')) {
+        IMG_AUDIO.classList.remove('bi-volume-up');
+        IMG_AUDIO.classList.add('bi-volume-mute');
+    } else {
+        IMG_AUDIO.classList.remove('bi-volume-mute');
+        IMG_AUDIO.classList.add('bi-volume-up');
+    }
 
 }

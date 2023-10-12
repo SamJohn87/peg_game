@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"> 
     <link rel="stylesheet" href="css/style.css">
     <title>Triangle Peg Game</title>
 </head>
@@ -72,6 +73,11 @@
     </div>
     <div class="container text-center mt-5">
         <h1 class="mb-4 text-white">Peg Solitaire Game</h1>
+        <div class="d-flex flex-row-reverse">
+            <button type="button" id="audioControl">
+                <i class="bi bi-volume-up"></i>
+            </button>
+        </div>
         <div class="game-container">
             <div class="info-board">
                 <div class="row">
@@ -119,7 +125,7 @@
         </div>
     </div>
     <!-- Modal for game completion -->
-    <div class="modal fade" id="gameCompletedModal" tabindex="-1" aria-labelledby="gameCompletedModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal slide" id="gameCompletedModal" tabindex="-1" aria-labelledby="gameCompletedModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
