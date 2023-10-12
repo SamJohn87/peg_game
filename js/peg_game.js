@@ -257,6 +257,8 @@ function movePeg(pegHoleIdx) {
         }
         
         //move peg
+        const pegHoleReceiver = document.querySelector(`#pegHole${possibility[0]}`);
+        pegHoleReceiver.classList.add('possibility');
         setTimeout(() => {
             pegToContainer.appendChild(pegToMove);
             if(IMG_AUDIO.classList.contains('bi-volume-up')) {
@@ -264,7 +266,8 @@ function movePeg(pegHoleIdx) {
             }
             //remove adjacent peg
             removePeg(`${pegHole}`,`${possibility[0]}`);
-        }, 200);
+            pegHoleReceiver.classList.remove('possibility');
+        }, 300);
         
 
         
@@ -326,7 +329,7 @@ function receivePeg(fromPegHole, toPegHole) {
         }
         //remove adjacent peg
         removePeg(`${fromPegHole}`,`${toPegHole}`);
-    }, 200);
+    }, 300);
     
 
     
