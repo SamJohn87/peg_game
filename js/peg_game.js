@@ -1,51 +1,10 @@
-class AudioController {
-    constructor() {
-        this.holeSelection = new Audio('audio/hole_selection.mp3');
-        this.move = new Audio('audio/peg_moving.mp3');
-        this.multipleChoices = new Audio('audio/multiple_choices.mp3');
-        this.endGame = new Audio('audio/end_game.mp3');
-    }
-
-    holeSelectionAudio() {
-        this.holeSelection.play();
-    }
-
-    movePegAudio() {
-        this.move.play();
-    }
-
-    multipleChoicesAudio() {
-        this.multipleChoices.play();
-    }
-
-    endGameAudio() {
-        this.endGame.play();
-    }
-}
-
-//GLOBAL VARIABLES
-const PEG_HOLE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
-const MOVE_OPTIONS = [['3','10'], ['4', '11'], ['1', '5', '10', '12'], ['2', '11'], ['3', '12'], ['8', '13'], ['9', '14'], ['6', '13'], ['7', '14'], ['1', '3', '12', '15'], ['2', '4'], ['3', '5', '10', '15'], ['6', '8'], ['7', '9'], ['10', '12']];
-const PEG_TO_REMOVE = [['2','6'], ['3', '7'], ['2', '4', '7', '8'], ['3', '8'], ['4', '9'], ['7', '10'], ['8', '11'], ['7', '11'], ['8', '12'], ['6', '7', '11', '13'], ['7', '8'], ['8', '9', '11', '14'], ['10', '11'], ['11', '12'], ['13', '14']];
-
-let EVENTS_ARR = [];
-let EVENTS_PEG_HOLE_ARR = [];
-
-//1 = 0; 2 = 1 index
-let FUNCTION_PEG;
-let FUNCTION_RECEIVE_PEG;
-let FUNCTION_START = [];
-let FROM_HOLE_NUMBER = 0;
-let TO_HOLE_NUMBER = 0;
-let MOVES_ALLOWED = []; //keeps track of how many moves are possible
-
+/* MODALS */
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const OBJECTIVE_MODAL = new bootstrap.Modal(document.querySelector('#objectiveModal'));
 const PEG_HOLE_SELECT_MODAL = new bootstrap.Modal(document.querySelector('#pegHoleSelectModal'));
 const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gameplayModal'));
-const BTN_START_GAME = document.querySelector('#btnStartGame');
-const STOPWATCH = document.querySelector('.stopwatch');
 const BTN_PLAY = document.querySelector('#linkGameplay');
+const BTN_START_GAME = document.querySelector('#btnStartGame');
 const BTN_RESET_GAME = document.querySelector('#btnResetGame');
 const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
 const BTN_GOT_IT = document.querySelector('#btnGotIt');
@@ -53,21 +12,44 @@ const BTN_LETS_GO = document.querySelector('#btnLetsGo');
 const BTN_AUDIO = document.querySelector('#audioControl');
 const AUDIO_CONTAINER = document.querySelector('#audioControl');
 const IMG_AUDIO = AUDIO_CONTAINER.firstElementChild;
-let FIRST_MOVE = true; //will be use to start the stopwatch after the first move
-let SECONDS = 0;
-let INTERVAL;
-let PEGS_LEFT; //number of pegs on the board
+//btn eventlisteners
+BTN_PLAY.addEventListener('click', showGameplay);
+BTN_GOT_IT.addEventListener('click', selectHole);
+BTN_START_GAME.addEventListener('click', startGame);
+BTN_LETS_GO.addEventListener('click', closeGameplayModal);
+BTN_AUDIO.addEventListener('click', controlAudio);
+/*********/
 
+document.addEventListener("DOMContentLoaded", getReady);
 
-//create AudioController to control sound effects during game
-const soundEffect = new AudioController();
-
-
-// Show the objective modal when the page is loaded
-document.addEventListener("DOMContentLoaded", function () {
+function getReady() {
     OBJECTIVE_MODAL.show();
-});
+}
 
+function showGameplay() {
+    GAMEPLAY_MODAL.show();
+}
+
+
+function selectHole() {
+    PEG_HOLE_SELECT_MODAL.hide();
+}
+
+function closeGameplayModal() {
+    GAMEPLAY_MODAL.hide();
+}
+
+function startGame() {
+    OBJECTIVE_MODAL.hide();
+    PEG_HOLE_SELECT_MODAL.show();
+
+    let game = new GameBoard();
+    game.selectFirstHole();
+}
+
+
+
+/*
 //btn eventlisteners
 BTN_PLAY.addEventListener('click', showGameplay);
 BTN_GOT_IT.addEventListener('click', selectHole);
@@ -596,7 +578,7 @@ function removeAllPegs() {
     //console.log(FUNCTION_START);
 
 }
-
+*/
 function controlAudio() {
 
     if(IMG_AUDIO.classList.contains('bi-volume-up')) {
