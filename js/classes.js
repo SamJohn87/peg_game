@@ -141,19 +141,19 @@ class GameBoard {
     removeAllPegs() {
         //console.log('remove all pegs');
         const allHoles = document.querySelectorAll('.peg-hole');
-        allHoles.forEach((el) => {
+        allHoles.forEach((hole) => {
             //clear classes
-            el.classList.remove('possibility', 'empty');
+            hole.classList.remove('possibility', 'empty');
 
             //delete peg if exist
-            const peg = el.firstElementChild;
+            const peg = hole.firstElementChild;
             if (peg) {
-                el.removeChild(peg);
+                hole.removeChild(peg);
             }
 
             //clone and replace peg-hole to remove event listeners
-            const clone = el.cloneNode(true);
-            el.parentNode.replaceChild(clone, el);
+            const clone = hole.cloneNode(true);
+            hole.parentNode.replaceChild(clone, hole);
         });
     }
 
