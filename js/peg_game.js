@@ -2,13 +2,11 @@
 const GAME_COMPLETE_MODAL = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
 const OBJECTIVE_MODAL = new bootstrap.Modal(document.querySelector('#objectiveModal'));
 const PEG_HOLE_SELECT_MODAL = new bootstrap.Modal(document.querySelector('#pegHoleSelectModal'));
-const GAMEPLAY_MODAL = new bootstrap.Modal(document.querySelector('#gameplayModal'));
 const BTN_PLAY = document.querySelector('#linkGameplay');
 const BTN_START_GAME = document.querySelector('#btnStartGame');
 const BTN_RESET_GAME = document.querySelector('#btnResetGame');
 const BTN_PLAY_AGAIN = document.querySelector('#btnPlayAgain');
 const BTN_GOT_IT = document.querySelector('#btnGotIt');
-const BTN_LETS_GO = document.querySelector('#btnLetsGo');
 const BTN_AUDIO = document.querySelector('#audioControl');
 const AUDIO_CONTAINER = document.querySelector('#audioControl');
 const IMG_AUDIO = AUDIO_CONTAINER.firstElementChild;
@@ -16,7 +14,6 @@ const IMG_AUDIO = AUDIO_CONTAINER.firstElementChild;
 BTN_PLAY.addEventListener('click', showGameplay);
 BTN_GOT_IT.addEventListener('click', selectHole);
 BTN_START_GAME.addEventListener('click', startGame);
-BTN_LETS_GO.addEventListener('click', closeGameplayModal);
 BTN_AUDIO.addEventListener('click', controlAudio);
 /*********/
 
@@ -35,9 +32,6 @@ function selectHole() {
     PEG_HOLE_SELECT_MODAL.hide();
 }
 
-function closeGameplayModal() {
-    GAMEPLAY_MODAL.hide();
-}
 
 function startGame() {
     OBJECTIVE_MODAL.hide();
