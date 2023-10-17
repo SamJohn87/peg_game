@@ -2,10 +2,10 @@
 body {
     font-family: Comfortaa;
     text-align: center;
-    background-color:#ebd6bb;
+    background-color: #ebd6bb;
     color: #65451F;
     background-image: url('https://samjohn87.github.io/peg_game/images/joel-jasmin-forestbird-xzPMUMDDsfk-unsplash.jpg');
-    background-size:cover;
+    background-size: cover;
 }
 
 .btn-custom {
@@ -30,7 +30,7 @@ body {
 
 .info-board {
     border-style: solid;
-    background-color:rgb(255, 255, 255,0.7);
+    background-color: rgb(255, 255, 255, 0.7);
     border-color: #b58a62;
     text-align: center;
     padding-top: 10px;
@@ -40,12 +40,13 @@ body {
 a {
     color: #b58a62;
 }
+
 /*******************/
 
 /***** game board css ****/
 .pegs-container {
     border-style: solid;
-    background-color:rgb(255, 255, 255,0.7);
+    background-color: rgb(255, 255, 255, 0.7);
     border-color: #b58a62;
     text-align: center;
     padding-top: 10px;
@@ -57,7 +58,7 @@ a {
     height: 35px;
     border-radius: 50%;
     border-style: solid;
-    background-color:white;
+    background-color: white;
     border-color: #b58a62;
     margin: 10px;
     display: inline-block;
@@ -75,21 +76,23 @@ a {
 }
 
 .possibility {
-    background-color:green;
+    background-color: green;
 }
+
 /*************************/
 
 /***** audio css ****/
 .sound-effect {
-width: 100%;
-border-style: solid;
+    width: 100%;
+    border-style: solid;
 
 }
 
 #audioControl {
-background-color: #b58a62;
-color: white;
+    background-color: #b58a62;
+    color: white;
 }
+
 /********************/
 
 /***** Modal css ****/
@@ -97,7 +100,7 @@ color: white;
     transform: translate(0, 100%);
     transition: transform 0.3s ease-out;
 }
-  
+
 .slide.in .modal-dialog {
     transform: translate(0, 0);
 }

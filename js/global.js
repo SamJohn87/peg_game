@@ -2,45 +2,45 @@
 const PEG_GAMEPLAY = [
     {
         id: '1',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '3',
                 remove: '2'
-            }, 
+            },
             {
                 move: '10',
                 remove: '6'
-            } 
+            }
         ]
     },
     {
         id: '2',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '4',
                 remove: '3'
-            }, 
+            },
             {
                 move: '11',
                 remove: '7'
-            } 
+            }
         ]
     },
     {
         id: '3',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '1',
                 remove: '2'
-            }, 
+            },
             {
                 move: '5',
                 remove: '4'
-            } , 
+            },
             {
                 move: '10',
                 remove: '7'
-            }, 
+            },
             {
                 move: '12',
                 remove: '8'
@@ -49,174 +49,174 @@ const PEG_GAMEPLAY = [
     },
     {
         id: '4',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '2',
                 remove: '3'
-            }, 
+            },
             {
                 move: '11',
                 remove: '8'
-            } 
+            }
         ]
     },
     {
         id: '5',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '3',
                 remove: '4'
-            }, 
+            },
             {
                 move: '12',
                 remove: '9'
-            } 
+            }
         ]
     },
     {
         id: '6',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '8',
                 remove: '7'
-            }, 
+            },
             {
                 move: '13',
                 remove: '10'
-            } 
+            }
         ]
     },
     {
         id: '7',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '9',
                 remove: '8'
-            }, 
+            },
             {
                 move: '14',
                 remove: '11'
-            } 
+            }
         ]
     },
     {
         id: '8',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '6',
                 remove: '7'
-            }, 
+            },
             {
                 move: '13',
                 remove: '11'
-            } 
+            }
         ]
     },
     {
         id: '9',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '7',
                 remove: '8'
-            }, 
+            },
             {
                 move: '14',
                 remove: '12'
-            } 
+            }
         ]
     },
     {
         id: '10',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '1',
                 remove: '6'
-            }, 
+            },
             {
                 move: '3',
                 remove: '7'
-            }, 
+            },
             {
                 move: '12',
                 remove: '11'
-            }, 
+            },
             {
                 move: '15',
                 remove: '13'
-            } 
+            }
         ]
     },
     {
         id: '11',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '2',
                 remove: '7'
-            }, 
+            },
             {
                 move: '4',
                 remove: '8'
-            } 
+            }
         ]
     },
     {
         id: '12',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '3',
                 remove: '8'
-            }, 
+            },
             {
                 move: '5',
                 remove: '9'
-            }, 
+            },
             {
                 move: '10',
                 remove: '11'
-            }, 
+            },
             {
                 move: '15',
                 remove: '14'
-            } 
+            }
         ]
     },
     {
         id: '13',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '6',
                 remove: '10'
-            }, 
+            },
             {
                 move: '8',
                 remove: '11'
-            } 
+            }
         ]
     },
     {
         id: '14',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '7',
                 remove: '11'
-            }, 
+            },
             {
                 move: '9',
                 remove: '12'
-            } 
+            }
         ]
     },
     {
         id: '15',
-        moveOptions: [ 
+        moveOptions: [
             {
                 move: '10',
                 remove: '13'
-            }, 
+            },
             {
                 move: '12',
                 remove: '14'
-            } 
+            }
         ]
     }
 ];
