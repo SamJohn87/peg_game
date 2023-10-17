@@ -30,37 +30,100 @@ class AudioController {
 
 class GameBoard {
     constructor() {
-        this.soundEffect = new AudioController();
-        this.firstMove = true;
-        this.pegSelected = false;
+        //audio 
         this.audio = document.querySelector('#audioControl > i');
+        this.soundEffect = new AudioController();
+
+        //stopwatch
         this.stopwatch = document.querySelector('.stopwatch');
-        this.movePossible = 0;
-        this.seconds = 0;
-        this.minutes = 0;
         this.remainderSeconds = 0;
         this.formattedTime;
-        this.pegsMovement = [];
-        this.pegCount = 14;
+        this.seconds = 0;
+        this.minutes = 0;
         this.interval;
-        this.wrongMoves = 0;
+
+        //gameflow
+        this.pegSelected = false; //indicate if player had selected the empty hole to start the game
+        this.pegsMovement = []; //keeps track of pegs movement combination pegFromContainer, pegToContainer, pegToRemove
+        this.movePossible = 0;  //count how many moves are possible for selected peg     
+        this.firstMove = true; //indicate beginning of the game
+        this.wrongMoves = 0; //if player click on unmoveable peg 3 times in a row gameplay modal will be shown  
+        this.pegCount = 14; //keep track of remaining pegs
+
+        //modals
+        this.gamePlayModal = new bootstrap.Modal(document.querySelector('#gameplayModal')); 
     }
 
     selectFirstHole() { //select first hole to start the game
         const pegHoles = document.querySelectorAll('.peg-hole');
-        for(let hole of pegHoles) {
-            hole.addEventListener('click', () => this.initializeBoard(`${hole.dataset.id}`));
-        }
+        pegHoles.forEach((el) => { el.addEventListener('click', () => this.initializeBoard(`${el.dataset.id}`)); });
+
+        //btn modal event listener
+        const linkGamePlay = document.querySelector('#linkGameplay');
+        linkGamePlay.addEventListener('click', () => { this.gamePlayModal.show(); });
+        const btnLetsGo = document.querySelector('#btnLetsGo');
+        btnLetsGo.addEventListener('click', () => { this.gamePlayModal.hide(); });
     }
 
     initializeBoard(hole) {
+
         if(!this.pegSelected) {
             if(this.audio.classList.contains('bi-volume-up')) {
                 this.soundEffect.holeSelectionAudio();
             }    
+            //event listener button reset game
+            const btnResetGame = document.querySelector('#btnResetGame');
+            btnResetGame.addEventListener('click', () => this.resetGame(`${hole}`));
             this.displayPegs(hole);
-        }            
+        }  
+
         this.pegSelected = true;
+    }
+
+    resetGame(firstHole) {
+        //console.log('reset game ' + firstHole);
+
+        //stopwatch
+        this.remainderSeconds = 0;
+        this.formattedTime;
+        this.seconds = 0;
+        this.minutes = 0;
+        this.interval;
+
+        //gameflow
+        this.pegsMovement = [];
+        this.movePossible = 0;  
+        this.pegSelected = false;
+        this.firstMove = true;
+        this.wrongMoves = 0; 
+        this.pegCount = 14;
+
+        this.updatePegsLeft();
+        this.stopStopwatch();
+        this.removeAllPegs();
+
+        this.stopwatch.textContent = '00:00';
+
+        this.initializeBoard(firstHole);
+    }
+
+    removeAllPegs() {
+        //console.log('remove all pegs');
+        const allHoles = document.querySelectorAll('.peg-hole');
+        allHoles.forEach((el) => {
+            //clear classes
+            el.classList.remove('possibility', 'empty');
+
+            //delete peg if exist
+            const peg = el.firstElementChild;
+            if(peg) {
+                el.removeChild(peg);
+            }
+
+            //clone and replace peg-hole to remove event listeners
+            const clone = el.cloneNode(true);
+            el.parentNode.replaceChild(clone, el);
+        });
     }
 
     displayPegs(holeException) {
@@ -83,10 +146,17 @@ class GameBoard {
     }
 
     checkPegMove(id) {
+
+        //disable peg movement if player have to first choose from multiple movement options
+        const arePossibilities = document.querySelectorAll('.possibility');
+        if(arePossibilities.length > 0) {
+            return;
+        }
+
         //console.log('peg ' + id);
         //get the hole container id where the peg is currently located
         const holeId = document.querySelector(`#peg${id}`).parentNode.dataset.id;
-        console.log('hole ' + holeId);
+        //console.log('hole ' + holeId);
         if(this.firstMove) {
             this.startStopwatch();
         }
@@ -94,10 +164,10 @@ class GameBoard {
         //get the list of moves possible for the peg selected
         const moveOptions = PEG_GAMEPLAY.find((Obj) => Obj.id === holeId).moveOptions;
         for(let move of moveOptions) {
-            const holeFrom = document.querySelector(`div[data-id='${holeId}`);
-            const holeReceiver = document.querySelector(`div[data-id='${move.move}`);
-            const holeAdjacent = document.querySelector(`div[data-id='${move.remove}`);
-            console.log(holeFrom, holeReceiver, holeAdjacent);
+            const holeFrom = document.querySelector(`div[data-id='${holeId}'`);
+            const holeReceiver = document.querySelector(`div[data-id='${move.move}'`);
+            const holeAdjacent = document.querySelector(`div[data-id='${move.remove}'`);
+            //console.log(holeFrom, holeReceiver, holeAdjacent);
             //if adjacent hole is not empty and receiving hole empty, move is possible
             if(holeReceiver.classList.contains('empty') && !holeAdjacent.classList.contains('empty')) { 
                 this.pegsMovement.push([holeFrom, holeReceiver, holeAdjacent]);
@@ -105,7 +175,7 @@ class GameBoard {
             }
         }
 
-        console.log('move possible ' + this.movePossible);
+        //console.log('move possible ' + this.movePossible);
         //activate sound effect if no move possible
         if(!this.movePossible) {
             if(this.audio.classList.contains('bi-volume-up')) {
@@ -123,8 +193,6 @@ class GameBoard {
             } else {
                 this.wrongMoves++;
             }
-
-            return;
         }
         
         if(this.movePossible > 1) { //multiple moves possible
@@ -132,39 +200,58 @@ class GameBoard {
             if(this.audio.classList.contains('bi-volume-up')) {
                 this.soundEffect.multipleChoicesAudio();
             }
-            console.log(this.pegsMovement);
+
+            //console.log(this.pegsMovement);
             for(let move of this.pegsMovement) {
-               const possibility = move.find((node) => node.classList.contains('empty'));
-               possibility.classList.add('possibility');
+                //console.log(move[0]);
+                const [ pegFromContainer, pegToContainer, pegRemoveContainer ] = move;
+                //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
+                const possibility = move.find((node) => node.classList.contains('empty'));
+                //highlight hole as possible move
+                possibility.classList.add('possibility'); 
+                //add even listener to hole where the player can move the peg to
+                possibility.addEventListener('click', () => { this.receivePeg(pegFromContainer, pegToContainer, pegRemoveContainer); });
             }
 
-
         } else if(this.movePossible === 1) { //only one move possible
-            console.log(this.pegsMovement[0]);
+            //console.log(this.pegsMovement[0]);
             const [pegFromContainer, pegToContainer, pegRemoveContainer] = this.pegsMovement[0];
             console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
-            pegToContainer.classList.add('possibility'); //highlight move before moving the peg
-            setTimeout(() => {
-                //console.dir(pegToContainer);
-                //move peg
-                this.movePeg(pegToContainer, pegFromContainer);               
-
-                //remove adjacent peg
-                this.removePeg(pegRemoveContainer);
-            }, 300);
-
-            //check if moves are possible
-            setTimeout(() => {
-                this.movePossible = 0;
-                if(this.isGameOver()) {
-                    this.gameOver();
-                };
-            }, 500);
+            //highlight possible move before moving the peg
+            pegToContainer.classList.add('possibility'); 
+            this.receivePeg(pegFromContainer, pegToContainer, pegRemoveContainer);                         
         }
 
         //RESET
         this.firstMove = false;
         this.pegsMovement = [];
+    }
+
+    receivePeg(pegFromContainer, pegToContainer, pegRemoveContainer) {
+        //block event listener if hole selected is empty
+        if(pegFromContainer.classList.contains('empty')) {
+            return;
+        }
+
+        //console.log('receiving peg');
+        //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
+
+        setTimeout(() => {
+            //console.dir(pegToContainer);
+            //move peg
+            this.movePeg(pegToContainer, pegFromContainer);               
+
+            //remove adjacent peg
+            this.removePeg(pegRemoveContainer);
+        }, 300);
+
+        //check if moves are possible
+        setTimeout(() => {
+            this.movePossible = 0;
+            if(this.isGameOver()) {
+                this.gameOver();
+            };
+        }, 500);
     }
 
     movePeg(pegToContainer, pegFromContainer) {
@@ -174,7 +261,11 @@ class GameBoard {
         }
 
         pegFromContainer.classList.add('empty');
-        pegToContainer.classList.remove('possibility', 'empty');
+        pegToContainer.classList.remove('empty');
+
+        //clear all posibilities
+        const possibilities = document.querySelectorAll('.possibility');
+        possibilities.forEach((el) => el.classList.remove('possibility'));
     }
 
     removePeg(hole) {        
@@ -196,20 +287,17 @@ class GameBoard {
 
         //get all hole with pegs
         const pegLefts = document.querySelectorAll('.peg-hole:not(.empty)');
-        console.dir(pegLefts);
+        //console.dir(pegLefts);
 
         for(let hole of pegLefts) {
             //get the list of moves possible for the peg selected
             const moveOptions = PEG_GAMEPLAY.find((Obj) => Obj.id === hole.dataset.id).moveOptions;
             for(let move of moveOptions) {
-                //const holeFrom = document.querySelector(`div[data-id='${hole.dataset.id}`);
                 const holeReceiver = document.querySelector(`div[data-id='${move.move}`);
                 const holeAdjacent = document.querySelector(`div[data-id='${move.remove}`);
-                console.dir(holeReceiver);
-                console.dir(holeAdjacent);
+
                 //if adjacent hole is not empty and receiving hole empty, move is possible
                 if(holeReceiver.classList.contains('empty') && !holeAdjacent.classList.contains('empty')) { 
-                    //this.pegsMovement.push([holeFrom, holeReceiver, holeAdjacent]);
                     this.movePossible++;
                 }
             }
@@ -227,11 +315,11 @@ class GameBoard {
     gameOver() {
         this.stopStopwatch();
         this.completeGameModal();
-
     }
 
     completeGameModal() {
         const gameCompleteModal = new bootstrap.Modal(document.querySelector('#gameCompletedModal'));
+        const btnPlayAgain = document.querySelector('#btnPlayAgain');
         const modalTime = document.querySelector("#modalTime");
         const modalPegsLeft = document.querySelector("#pegsLeft");
         const modalSkillMessage = document.querySelector("#skillMessage");
@@ -241,6 +329,9 @@ class GameBoard {
         let minutes = parseInt(inputTime[0]);
         let seconds = parseInt(inputTime[1]);
         let timeMsg = '';
+
+        //even listener
+        btnPlayAgain.addEventListener('click', () => { document.location.reload(); });
 
         if(minutes > 0) {
 
