@@ -216,7 +216,7 @@ class GameBoard {
         } else if(this.movePossible === 1) { //only one move possible
             //console.log(this.pegsMovement[0]);
             const [pegFromContainer, pegToContainer, pegRemoveContainer] = this.pegsMovement[0];
-            console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
+            //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
             //highlight possible move before moving the peg
             pegToContainer.classList.add('possibility'); 
             this.receivePeg(pegFromContainer, pegToContainer, pegRemoveContainer);                         
