@@ -112,8 +112,6 @@ class GameBoard {
     }
 
     resetGame(firstHole) {
-        //console.log('reset game ' + firstHole);
-
         //stopwatch
         this.remainderSeconds = 0;
         this.formattedTime;
@@ -139,7 +137,6 @@ class GameBoard {
     }
 
     removeAllPegs() {
-        //console.log('remove all pegs');
         const allHoles = document.querySelectorAll('.peg-hole');
         allHoles.forEach((hole) => {
             //clear classes
@@ -155,7 +152,7 @@ class GameBoard {
             const clone = hole.cloneNode(true);
             hole.parentNode.replaceChild(clone, hole);
         });
-    }
+    } 
 
     displayPegs(holeException) {
         const pegHoles = document.querySelectorAll('.peg-hole');
@@ -184,10 +181,8 @@ class GameBoard {
             return;
         }
 
-        //console.log('peg ' + id);
         //get the hole container id where the peg is currently located
         const holeId = document.querySelector(`#peg${id}`).parentNode.dataset.id;
-        //console.log('hole ' + holeId);
         if (this.firstMove) {
             this.startStopwatch();
         }
@@ -198,7 +193,6 @@ class GameBoard {
             const holeFrom = document.querySelector(`div[data-id='${holeId}'`);
             const holeReceiver = document.querySelector(`div[data-id='${move.move}'`);
             const holeAdjacent = document.querySelector(`div[data-id='${move.remove}'`);
-            //console.log(holeFrom, holeReceiver, holeAdjacent);
             //if adjacent hole is not empty and receiving hole empty, move is possible
             if (holeReceiver.classList.contains('empty') && !holeAdjacent.classList.contains('empty')) {
                 this.pegsMovement.push([holeFrom, holeReceiver, holeAdjacent]);
@@ -206,7 +200,6 @@ class GameBoard {
             }
         }
 
-        //console.log('move possible ' + this.movePossible);
         //activate sound effect if no move possible
         if (!this.movePossible) {
             if (this.audio.classList.contains('bi-volume-up')) {
@@ -227,16 +220,12 @@ class GameBoard {
         }
 
         if (this.movePossible > 1) { //multiple moves possible
-            //console.log('multiple');
             if (this.audio.classList.contains('bi-volume-up')) {
                 this.soundEffect.multipleChoicesAudio();
             }
 
-            //console.log(this.pegsMovement);
             for (let move of this.pegsMovement) {
-                //console.log(move[0]);
                 const [pegFromContainer, pegToContainer, pegRemoveContainer] = move;
-                //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
                 const possibility = move.find((node) => node.classList.contains('empty'));
                 //highlight hole as possible move
                 possibility.classList.add('possibility');
@@ -245,9 +234,7 @@ class GameBoard {
             }
 
         } else if (this.movePossible === 1) { //only one move possible
-            //console.log(this.pegsMovement[0]);
             const [pegFromContainer, pegToContainer, pegRemoveContainer] = this.pegsMovement[0];
-            //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
             //highlight possible move before moving the peg
             pegToContainer.classList.add('possibility');
             this.receivePeg(pegFromContainer, pegToContainer, pegRemoveContainer);
@@ -264,11 +251,7 @@ class GameBoard {
             return;
         }
 
-        //console.log('receiving peg');
-        //console.log(pegFromContainer, pegToContainer, pegRemoveContainer);
-
         setTimeout(() => {
-            //console.dir(pegToContainer);
             //move peg
             this.movePeg(pegToContainer, pegFromContainer);
 
@@ -300,7 +283,6 @@ class GameBoard {
     }
 
     removePeg(hole) {
-        //console.log('remove peg');
         //remove peg
         hole.removeChild(hole.firstElementChild);
         //declare hole empty
@@ -318,7 +300,6 @@ class GameBoard {
 
         //get all hole with pegs
         const pegLefts = document.querySelectorAll('.peg-hole:not(.empty)');
-        //console.dir(pegLefts);
 
         for (let hole of pegLefts) {
             //get the list of moves possible for the peg selected
