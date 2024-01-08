@@ -15,3 +15,4 @@ Feel free to explore my [personal website](https://samjohn87.github.io/) to lear
 ## Visuals
 
 ![Alt text](/images/peg_game_web_version.png)
+![Alt text](images/peg_game_mobile_version.png)
