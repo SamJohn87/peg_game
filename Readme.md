@@ -2,7 +2,7 @@
 
 The Triangle Peg Game is a classic brain-teaser where the objective is to jump pegs over one another, removing them until only one peg remains.
 My project involved the design and development of a digital version of the Triangle Peg Game.
-This project was developed with Vanilla JavaScript.
+This project was developed with **Vanilla JavaScript**.
 
 ## Where to play?
 
