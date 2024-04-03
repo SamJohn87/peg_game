@@ -1,4 +1,3 @@
-/***** main css ****/
 body {
     font-family: Comfortaa;
     text-align: center;
@@ -40,8 +39,6 @@ body {
 a {
     color: #b58a62;
 }
-
-/*******************/
 
 /***** game board css ****/
 .pegs-container {

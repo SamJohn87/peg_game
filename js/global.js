@@ -1,4 +1,8 @@
 //Object defining gameplay with moves allowed and peg to remove
+/*
+The 'id' represents the number of the hole from which the peg is selected to be moved.
+Based on the peg selected for movement, 'move' will indicate the destination hole for the peg, while 'remove' will indicate the hole from which the adjacent peg should be removed.
+*/
 const PEG_GAMEPLAY = [
     {
         id: '1',
